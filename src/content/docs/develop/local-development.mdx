@@ -1,0 +1,252 @@
+---
+title: Local development
+description: Run the full SpaceWorks stack on your machine with live reload, seed demo data and find every local URL.
+sidebar:
+  order: 2
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The supported way to develop SpaceWorks is to run **the whole stack in Docker with live reload**. One
+script, `scripts/dev.sh`, starts PostgreSQL, Redis, object storage, Django, the Celery worker and
+scheduler, and the Vite dev server. You do not need a host virtualenv or a host `npm install` for
+day-to-day work.
+
+:::note
+This page is for contributors working on the code. To run SpaceWorks for a makerspace, follow
+[Quick start](/get-started/quick-start/) or [Docker Compose](/install/docker-compose/) instead.
+:::
+
+## Prerequisites
+
+| Tool | Needed for | Notes |
+| --- | --- | --- |
+| Docker with Compose v2 | Everything | Docker Desktop on Windows and macOS, Docker Engine on Linux. The dev layer uses Compose's `!override` and `!reset` merge tags, so use a recent Compose release. |
+| Bash | `scripts/dev.sh` | Any Linux or macOS shell. On Windows, use **Git Bash** (or a WSL2 shell). |
+| Git | Cloning | The repository enforces LF line endings through `.gitattributes`. |
+| Node.js 20.19+ or 22.12+ | Optional | Only for running Vite, the production build or Playwright on the host. The Docker images use Node 22. |
+| Python 3.12+ | Optional | Only if you run the backend outside Docker. |
+
+## Start the stack
+
+<Steps>
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/SpaceWorks-HQ/SpaceWorks.git
+   cd SpaceWorks
+   ```
+
+2. Build and start everything:
+
+   ```bash
+   ./scripts/dev.sh up --build
+   ```
+
+   The first build takes a while. Afterwards you can drop `--build` unless you changed a
+   `Dockerfile`, `backend/requirements.txt` or `frontend/package.json`.
+
+   `up` waits for the one-shot setup containers (database orchestration, migrations and bucket
+   creation) and removes them once they exit successfully. If one fails, `up` keeps it and prints a
+   hint such as `dev.sh logs migrate`.
+
+3. Seed demo data (first run only):
+
+   ```bash
+   ./scripts/dev.sh run --rm --no-deps backend --role management python manage.py seed_demo
+   ```
+
+   This creates three demo makerspaces with inventory, boxes and machines, a superadmin and one
+   Space Manager per makerspace. The command refuses to run unless `DEBUG=True`, which the dev
+   stack sets for you.
+
+4. Open the app at `http://localhost:5000`.
+
+</Steps>
+
+After `up`, seven long-running containers remain: `db`, `redis`, `minio`, `backend`, `worker`, `beat`
+and `frontend`.
+
+## Local URLs
+
+| What | URL |
+| --- | --- |
+| Frontend (Vite, hot reload) | `http://localhost:5000` |
+| Public catalogue for a demo makerspace | `http://localhost:5000/m/alpha-lab` (also `beta-workshop`, `gamma-fab`) |
+| React staff console | `http://localhost:5000/admin/` |
+| API | `http://localhost:8000/api/v1/` |
+| Health check | `http://localhost:8000/api/v1/health/` |
+| Swagger UI | `http://localhost:8000/docs/` |
+| ReDoc | `http://localhost:8000/redoc/` |
+| OpenAPI schema | `http://localhost:8000/schema/` |
+| Django control plane (superadmin only) | `http://localhost:8000/control/` |
+| Object storage console | `http://localhost:9001` (user `minioadmin`, password `minioadmin`) |
+| PostgreSQL | `localhost:5432`, database `makerspace_manager` |
+
+The Vite dev server proxies `/api` to the backend, so the browser only ever talks to port 5000.
+
+### Demo accounts
+
+`seed_demo` creates these accounts, all with the password `demo12345` (override it with
+`--password`):
+
+| Username | Role |
+| --- | --- |
+| `superadmin` | Global superadmin. Can sign in to `/control/` and see every makerspace. |
+| `alpha_manager` | Space Manager of `alpha-lab` |
+| `beta_manager` | Space Manager of `beta-workshop` |
+| `gamma_manager` | Space Manager of `gamma-fab` |
+
+The demo makerspaces are created with every module installed, so all surfaces are visible.
+
+:::caution
+These are development credentials. `seed_demo` refuses to write fictional data to a production
+database unless you explicitly pass `--allow-production-demo`. Do not.
+:::
+
+## Everyday commands
+
+Anything other than `up`, `down`, `test` and `e2e` is forwarded verbatim to `docker compose`, with
+the right compose files already chained.
+
+```bash
+./scripts/dev.sh logs -f backend          # follow Django logs
+./scripts/dev.sh restart worker beat      # Celery has no autoreload; restart after task changes
+./scripts/dev.sh exec backend python manage.py shell
+./scripts/dev.sh exec backend python manage.py makemigrations bookings
+./scripts/dev.sh up                       # re-runs migrations from your working tree
+./scripts/dev.sh up --build -V frontend   # after changing package.json: rebuild node_modules
+./scripts/dev.sh down                     # stop; volumes (your database) are kept
+./scripts/dev.sh down -v                  # stop and wipe the dev database and storage
+```
+
+What reloads on its own:
+
+- **Django** runs under `runserver` with `DEBUG=True` and reloads when you save a backend file.
+  `./backend` is bind-mounted into the container.
+- **The frontend** runs the Vite dev server with hot module replacement. `./frontend` is bind-mounted.
+- **Migrations** run from the mounted tree, so a migration you just wrote applies on the next
+  `./scripts/dev.sh up` without rebuilding the image.
+- **Celery** (`worker`, `beat`) does not reload. Restart it after changing task code.
+
+The backend container runs as your host user (`DEV_UID`/`DEV_GID`, default `1000:1000`) so files
+it generates, such as new migrations, are owned by you. If your host user ID differs, set `DEV_UID`
+and `DEV_GID` in a `.env` file at the repository root.
+
+:::tip[Why a script instead of plain docker compose?]
+Passing any `-f` flag to `docker compose` turns off the automatic merge of
+`docker-compose.override.yml`. `dev.sh` spells out the chain explicitly: `docker-compose.yml`, then
+your `docker-compose.override.yml` if present, then `docker-compose.dev.yml` last so its live-reload
+settings win.
+:::
+
+## Configuration and port conflicts
+
+The dev stack works without any configuration. Values come from Compose interpolation, so you can
+set them in a `.env` file at the repository root or export them in your shell. A few you may want:
+
+| Variable | Why |
+| --- | --- |
+| `API_CLIENT_ENC_KEY` | Fernet key that encrypts stored API-client and integration secrets. Needed to try API clients or chat channels. |
+| `AUDIT_MAC_MASTER_KEY` | Fernet key for per-row audit MACs. Without it, audit rows are recorded as unattested. |
+| `DEV_UID`, `DEV_GID` | Your host user and group IDs (see above). |
+
+The project's CI generates throwaway Fernet keys like this:
+
+```bash
+openssl rand -base64 32 | tr '+/' '-_'
+```
+
+If a port is already taken on your machine, create a `docker-compose.override.yml` at the repository
+root (it is gitignored) and remap it. Use `!override` so Compose replaces the base port list instead
+of appending to it:
+
+```yaml title="docker-compose.override.yml"
+services:
+  db:
+    ports: !override
+      - "5435:5432"
+```
+
+The stack also bind-mounts two host directories for operational state: `SPACEWORKS_OPS_HOST_DIR`
+(default `/var/lib/spaceworks/ops`) and `SPACEWORKS_HOST_STATE_DIR` (default
+`/var/lib/spaceworks/host`). If Docker refuses those mounts on your machine, point both variables at
+a folder you own in your `.env`.
+
+## Platform notes
+
+<Tabs>
+<TabItem label="Windows">
+
+- Run every `./scripts/dev.sh` command from **Git Bash** (installed with Git for Windows) or from a
+  WSL2 shell. PowerShell and `cmd.exe` cannot run the script.
+- The script sets `MSYS_NO_PATHCONV=1` and converts paths with `cygpath`, so Git Bash path mangling
+  does not break the Docker volume mounts.
+- `.gitattributes` forces LF line endings on checkout. Do not override it with
+  `core.autocrlf=true`: a shell script with CRLF endings fails inside the Linux containers.
+
+</TabItem>
+<TabItem label="macOS">
+
+- Use Docker Desktop (or another Docker-compatible engine) and the default shell.
+- If Docker refuses to mount `/var/lib/spaceworks/...`, set `SPACEWORKS_OPS_HOST_DIR` and
+  `SPACEWORKS_HOST_STATE_DIR` to folders under your home directory, as described above.
+
+</TabItem>
+<TabItem label="Linux">
+
+- Docker Engine with the Compose v2 plugin is all you need.
+- Set `DEV_UID`/`DEV_GID` to your IDs (`id -u`, `id -g`) if they are not `1000`, so files the
+  backend container writes into your checkout stay owned by you.
+
+</TabItem>
+</Tabs>
+
+## Running processes on the host (advanced)
+
+The Docker dev stack is the supported topology, and the project's own tooling assumes it. If you
+really need to run Django or Vite directly on your machine, you can start only the infrastructure in
+Docker and run the app processes yourself:
+
+<Tabs>
+<TabItem label="Backend">
+
+```bash
+docker compose up -d db minio createbuckets
+cd backend
+python -m venv .venv
+source .venv/bin/activate        # Windows PowerShell: .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+cp .env.example .env             # DEBUG=True and a localhost DATABASE_URL
+python manage.py migrate
+python manage.py seed_demo
+python manage.py runserver       # http://localhost:8000
+```
+
+Without `CELERY_BROKER_URL` set, Celery tasks run inline instead of on a worker.
+
+</TabItem>
+<TabItem label="Frontend">
+
+```bash
+cd frontend
+cp .env.example .env             # VITE_API_URL=http://localhost:8000/api
+npm install
+npm run dev                      # http://localhost:5000
+```
+
+</TabItem>
+</Tabs>
+
+:::caution
+Only regenerate `frontend/package-lock.json` with the same Node/npm as the Docker image (Node 22),
+or `npm ci` in the image build fails. One way:
+`docker run --rm -v "$PWD/frontend:/app" -w /app node:22-alpine npm install --package-lock-only`.
+:::
+
+## Next steps
+
+- [Project structure](/develop/project-structure/) to find your way around the code.
+- [Testing](/develop/testing/) to run the test runner and type checks.
+- [Backend conventions](/develop/backend-conventions/) before you write your first endpoint.

@@ -1,0 +1,39 @@
+/* SpaceWorks brand colours mapped onto Starlight's theme tokens.
+   Teal is the accent; the light theme sits on the brand cream. */
+
+:root {
+  --sl-color-accent-low: #0b3a35;
+  --sl-color-accent: #2fb3a3;
+  --sl-color-accent-high: #c9efe9;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #eef1ef;
+  --sl-color-gray-2: #c4ccc9;
+  --sl-color-gray-3: #92a19c;
+  --sl-color-gray-4: #5b6863;
+  --sl-color-gray-5: #34433f;
+  --sl-color-gray-6: #1d2f2c;
+  --sl-color-black: #11201e;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #d3eee9;
+  --sl-color-accent: #006e63;
+  --sl-color-accent-high: #0b3a35;
+  --sl-color-white: #142c2a;
+  --sl-color-gray-1: #1d2f2c;
+  --sl-color-gray-2: #34433f;
+  --sl-color-gray-3: #5b6863;
+  --sl-color-gray-4: #92a19c;
+  --sl-color-gray-5: #d5d0c6;
+  --sl-color-gray-6: #efe6db;
+  --sl-color-gray-7: #faf3ea;
+  --sl-color-black: #fffaf3;
+}
+
+:root {
+  --sl-content-width: 50rem;
+}
+
+.hero h1 {
+  letter-spacing: -0.02em;
+}

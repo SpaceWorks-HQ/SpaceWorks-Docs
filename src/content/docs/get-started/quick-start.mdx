@@ -1,0 +1,186 @@
+---
+title: Quick start
+description: Install SpaceWorks with one command, sign in as the first superadmin and find your way around.
+sidebar:
+  order: 2
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+This page takes you from an empty server to a running SpaceWorks install with one command. The
+installer asks all its questions first, shows you a summary, and changes nothing on the machine until
+you confirm.
+
+## Before you start
+
+You need:
+
+- **A 64-bit machine** (x86_64; on arm64 you build the images yourself, see [Requirements](/install/requirements/)) running Linux (Debian/Ubuntu, Fedora/RHEL/Alma/Rocky, Arch or
+  openSUSE). macOS also works, and so does Windows through Git Bash or WSL2, as long as Docker Desktop
+  is installed and running.
+- **On Linux, root or a user with `sudo`.** The installer installs Docker, Docker Compose and curl for
+  you after you confirm. `curl` (or `wget`) and `tar` must already be there.
+- **Internet access** to `github.com` and `ghcr.io`.
+- **At least 8 GiB of free disk space.**
+- **A domain name is optional.** The default is plain HTTP, which is fine for a trial or a local
+  network. For automatic HTTPS you need a domain pointing at the server and an email address for the
+  certificate.
+
+Have these answers ready: the web address people will type (a host name or IP address), your makerspace
+name, and the admin username, email and password. You can leave the password blank and the installer
+generates a strong one.
+
+See [Requirements](/install/requirements/) for the full list, including ports.
+
+## Install
+
+<Steps>
+
+1. **Run the installer** on the server, as your normal user:
+
+   ```bash title="On the server"
+   curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | bash
+   ```
+
+   It asks for your `sudo` password when it needs root. Piping to `sudo bash` also works if you want
+   the install owned by root. To read the checklist without changing anything, download the script and
+   run `bash install.sh --help`.
+
+2. **Choose the repository.** The first question is which GitHub repository to install and update
+   from. Press <kbd>Enter</kbd> for the main project. If you run your own fork, type it as
+   `owner/name`, or pass it up front:
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | bash -s -- --repo YourName/SpaceWorks
+   ```
+
+3. **Answer the setup questions.** Press <kbd>Enter</kbd> to accept each default shown in brackets.
+   In order, the installer asks about:
+
+   - **Hosting:** one makerspace (default), several makerspaces at `/m/<slug>`, or a platform with
+     a subdomain per makerspace.
+   - **Website:** serve the website from this server (default), or run the API only.
+   - **HTTPS:** plain HTTP (default), automatic HTTPS through Caddy, or your existing reverse proxy.
+   - **Containers:** standard (default) or [single box](/install/single-box/).
+   - **Storage:** the bundled Silo object storage (default) or your own S3-compatible buckets.
+   - **Your makerspace:** web address, name, then eight yes/no **areas**: Inventory & lending,
+     Machines and Reports default to yes; Events, Bookings, Membership, Online payments and Chat
+     alerts default to no. Each "yes" asks a few follow-up settings.
+   - **Admin account:** username, email and password.
+   - **Optional extras:** a Google sign-in client ID, Stripe keys (only with Online payments), and an
+     optional GitHub Actions runner for automatic deploys (default no).
+
+   Every question and default is explained in [Setup questions](/install/setup-questions/).
+
+4. **Review the summary and confirm.** One summary lists every choice, the services that will run and
+   what will change on the host, followed by `Proceed? [Y/n]`. Answer no and nothing is installed.
+
+5. **Wait for it to finish.** The installer installs anything missing, copies the release into
+   `/opt/spaceworks` (set `SPACEWORKS_DIR` before `bash` to change this), writes private settings with
+   generated secrets, pulls the pinned release images and starts everything. The first run takes a few
+   minutes.
+
+6. **Save the login details.** At the end the installer prints your website address and admin
+   username. If you let it generate the password, this is the **only** time it is shown. Write it
+   down.
+
+</Steps>
+
+:::note
+A production install creates your admin account and your first makerspace, with no demo data.
+:::
+
+## Open the app and sign in
+
+Open the website address the installer printed. These are the places you will use most:
+
+| Where | Path | Who it is for |
+| --- | --- | --- |
+| Public catalogue | `/m/<slug>` | Everyone. `<slug>` is a URL-friendly form of your makerspace name, for example `riverside-makerspace`. |
+| Staff console | `/admin` | Staff and the superadmin. Sign in here with the admin account you just created. |
+| API and Swagger UI | `/api` and `/docs/` | Developers and integrations. |
+| Django control plane | `/control/` | The superadmin only. Not served on the public website. |
+
+When a domain is dedicated to a single makerspace, that makerspace's public pages are served from the
+domain root instead of `/m/<slug>`.
+
+:::caution[The control plane is private on purpose]
+`/control/` is the Django-based operator screen for platform-wide settings. It is deliberately **not**
+exposed on the public website port, and only active superadmins can use it. You reach it through a
+private connection to the backend. See [First run](/install/first-run/).
+:::
+
+## Make it useful
+
+Sign in to the staff console at `/admin`, then:
+
+1. **Add your inventory**: the tools and equipment people can borrow.
+2. **Check the public catalogue** at `/m/<slug>` and adjust what each item shows publicly.
+3. **Add your team** and give each person a role. See [Roles and permissions](/guides/roles-and-permissions/).
+4. **Review your modules** and switch on the parts of SpaceWorks your space actually uses. See
+   [Modules](/guides/modules/).
+5. **Optionally connect email and chat alerts.** See [Email](/configure/email/) and
+   [Notifications](/configure/notifications/).
+
+[Makerspace setup](/guides/makerspace-setup/) walks through this in detail.
+
+## Update later
+
+Run the same `curl … | bash` command again on a server that already has SpaceWorks, and the installer
+shows a menu instead of reinstalling:
+
+1. Update to the latest release (backs up the database first).
+2. Change modules only.
+3. Update, then change modules.
+4. Cancel (the default).
+
+See [Updates](/install/updates/) for manual updates and automatic deploys.
+
+## Try it locally
+
+You can try SpaceWorks on your own computer before you pick a server.
+
+<Tabs>
+<TabItem label="Installer on your computer">
+
+Install Docker Desktop and start it, then run the same one-line installer from a terminal (Git Bash or
+WSL2 on Windows). When it asks for the web address, type `localhost` and keep plain HTTP. When it
+finishes, open `http://localhost/admin` and sign in with the admin account it printed.
+
+On Windows Git Bash, choose an install folder you own, for example:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | SPACEWORKS_DIR="$HOME/SpaceWorks" bash
+```
+
+</TabItem>
+<TabItem label="From source (developers)">
+
+Clone the repository and start the development stack, which runs everything in Docker with live
+reload:
+
+```bash
+git clone https://github.com/SpaceWorks-HQ/SpaceWorks.git
+cd SpaceWorks
+./scripts/dev.sh up --build
+```
+
+The website is at `http://localhost:5000` and the API at `http://localhost:8000/api`. To fill it with
+fictional demo makerspaces, staff and inventory, run:
+
+```bash
+./scripts/dev.sh exec backend python manage.py seed_demo
+```
+
+It prints the demo account names and their shared password. The demo spaces are at `/m/alpha-lab`,
+`/m/beta-workshop` and `/m/gamma-fab`. See [Local development](/develop/local-development/).
+
+</TabItem>
+</Tabs>
+
+## Next steps
+
+- [Concepts](/get-started/concepts/): how makerspaces, roles, requests and modules fit together.
+- [Setup questions](/install/setup-questions/): every installer question and its default.
+- [Domains and TLS](/install/domains-and-tls/): put SpaceWorks on a real domain with HTTPS.
+- [Backup and restore](/install/backup-restore/): protect your data before you rely on it.

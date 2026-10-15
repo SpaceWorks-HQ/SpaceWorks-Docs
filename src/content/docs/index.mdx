@@ -1,0 +1,66 @@
+---
+title: SpaceWorks documentation
+description: Install, configure, run and extend SpaceWorks, the open-source makerspace manager.
+template: splash
+hero:
+  tagline: Free, self-hosted software for makerspaces and tool libraries. Track every tool, loan, print job and event, with evidence for every handover.
+  actions:
+    - text: Install SpaceWorks
+      link: /get-started/quick-start/
+      icon: right-arrow
+    - text: What is SpaceWorks?
+      link: /get-started/introduction/
+      variant: minimal
+    - text: View on GitHub
+      link: https://github.com/SpaceWorks-HQ/SpaceWorks
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## Start here
+
+<CardGrid>
+  <LinkCard
+    title="Quick start"
+    description="Run one command on a Linux server and have SpaceWorks live in minutes."
+    href="/get-started/quick-start/"
+  />
+  <LinkCard
+    title="Core concepts"
+    description="Makerspaces, members, staff roles, the loan lifecycle, evidence and modules."
+    href="/get-started/concepts/"
+  />
+  <LinkCard
+    title="Environment variables"
+    description="Every setting the server reads, what it does and its default."
+    href="/configure/environment-variables/"
+  />
+  <LinkCard
+    title="FAQ"
+    description="Short answers to the questions people ask first."
+    href="/help/faq/"
+  />
+</CardGrid>
+
+## Find your path
+
+<CardGrid>
+  <Card title="Self-hosters" icon="laptop">
+    Pick a deployment, run the installer, point a domain at it and keep it updated and backed up.
+    Start with [Requirements](/install/requirements/) and the [one-line installer](/install/one-line-install/).
+  </Card>
+  <Card title="Makerspace staff" icon="open-book">
+    Set up your space, invite staff, add inventory and QR labels, then run loans, printing and
+    events. See [Set up your makerspace](/guides/makerspace-setup/).
+  </Card>
+  <Card title="Developers" icon="seti:python">
+    Run the stack locally, learn the architecture and the rules that keep it safe, and contribute.
+    Start with [Local development](/develop/local-development/).
+  </Card>
+  <Card title="Integrators" icon="puzzle">
+    Use the REST API, signed API clients, webhooks and the device protocol for printers and
+    kiosks. See the [API overview](/api/overview/).
+  </Card>
+</CardGrid>

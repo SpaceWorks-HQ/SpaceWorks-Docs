@@ -1,0 +1,207 @@
+---
+title: One-line install
+description: Install SpaceWorks with a single command that checks your server, asks every question up front and changes nothing until you confirm.
+sidebar:
+  order: 2
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+The fastest way to run SpaceWorks is the guided installer. One command checks your machine,
+downloads the newest published release, asks all of its questions, shows you a summary and only then
+installs anything. You don't need to clone the repository or build anything yourself.
+
+## Run the installer
+
+<Tabs syncKey="os">
+<TabItem label="Linux">
+
+Run this as your normal user (not `root`). The installer asks for your `sudo` password when it
+needs it:
+
+```bash title="On the server"
+curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | bash
+```
+
+If Docker, Docker Compose or `curl` are missing, the installer installs them through your package
+manager (`apt`, `dnf`/`yum`, `pacman` or `zypper`), but only after you confirm the summary.
+
+</TabItem>
+<TabItem label="macOS">
+
+Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), start it and wait until
+it says it is running. Then, in Terminal:
+
+```bash title="Terminal"
+curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | SPACEWORKS_DIR="$HOME/SpaceWorks" bash
+```
+
+On macOS the installer won't install Docker for you. If Docker Desktop is installed but not running,
+it stops without changing anything.
+
+</TabItem>
+<TabItem label="Windows (WSL2)">
+
+Recommended on Windows, because everything works here, including restore.
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) with the WSL2 engine,
+   and turn on WSL integration for your Linux distribution.
+2. Open your WSL2 distribution (for example Ubuntu) and run:
+
+```bash title="WSL2 shell"
+curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | bash
+```
+
+</TabItem>
+<TabItem label="Windows (Git Bash)">
+
+Install and start [Docker Desktop](https://www.docker.com/products/docker-desktop/), then open
+**Git Bash** and install into your home folder:
+
+```bash title="Git Bash"
+curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | SPACEWORKS_DIR="$HOME/SpaceWorks" bash
+```
+
+Git Bash is fine for installing, everyday Compose commands and updates. **Restore and backup import
+refuse to run under Git Bash**: they need Linux file locking (`flock`), which only Linux or WSL2
+provides. If you might ever need to restore this install, use WSL2 instead.
+
+</TabItem>
+</Tabs>
+
+<Aside type="caution">
+Don't use the PowerShell scripts `setup.ps1` or `scripts/update.ps1`. They stop straight away with
+a message telling you to use WSL2.
+</Aside>
+
+The installer needs an interactive terminal: it reads your answers from the keyboard even though the
+script itself arrives through a pipe. To print its checklist without changing anything, download it
+and run `bash install.sh --help`.
+
+## What happens when you run it
+
+<Steps>
+
+1. **Preflight checks.** It checks the CPU architecture (x86_64 or arm64; note that published
+   images are amd64 only, so on ARM [build from source](#building-from-source-instead)), your operating system,
+   whether `curl`, `tar`, Docker and Docker Compose V2 are present, whether Docker is running, that
+   there is at least 8 GiB free, and whether SpaceWorks is already installed. Nothing on the machine
+   changes during this step.
+
+2. **Choose the repository.** On a fresh install it asks which GitHub repository to install and
+   update from. Press <kbd>Enter</kbd> for the main project, `SpaceWorks-HQ/SpaceWorks`.
+
+3. **Download the release questionnaire.** It looks up the latest published release of that
+   repository on GitHub and downloads that tag's source archive into temporary storage. Release
+   tags look like `v0.9.2-main.<run>.<commit>`, so every install is pinned to an exact,
+   reproducible build.
+
+4. **Ask every question.** You answer the deployment questions: hosting model, website, HTTPS,
+   container shape, storage, makerspace details, feature areas, admin account and optional
+   integrations. [Setup questions](/install/setup-questions/) lists all of them with their
+   defaults.
+
+5. **Show a summary and wait.** You see every answer (secrets hidden), the services that will run
+   and the host changes it will make, followed by `Proceed? [Y/n]`. Answer `n` and nothing is
+   installed. After you answer, it checks that the ports your choices need are free.
+
+6. **Install.** Only now does it install missing packages, start Docker if needed (adding you to the
+   `docker` group if that's required), copy the release into the install directory, write a private
+   `.env` with freshly generated secrets, pull the pinned images, create the database, create your
+   admin account and first makerspace, apply the areas you chose and start the services.
+
+7. **Print your addresses.** It finishes by printing the website address and admin username. If you
+   left the admin password blank, it prints the generated password **once**. Save it now.
+
+</Steps>
+
+The first run pulls several container images and can take a few minutes.
+
+## Where it installs
+
+| Path | What lives there |
+| --- | --- |
+| `/opt/spaceworks` | The release files, your private `.env` (mode 600), the version marker `.spaceworks-version`, the chosen container shape `.spaceworks-layer`, and `backups/` |
+| `/var/lib/spaceworks/ops` | Root-owned operational state: the database pointer, configuration checksums, the shared operation lock and the backup work area |
+| `/var/lib/spaceworks/host` | Root-owned host state used to safely start, update and restore the app |
+| Docker volumes | Database, object storage and TLS certificate data (see [Docker Compose](/install/docker-compose/#volumes-and-where-data-lives)) |
+
+To install somewhere other than `/opt/spaceworks`, set `SPACEWORKS_DIR` on the `bash` side of the
+pipe:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | SPACEWORKS_DIR="$HOME/SpaceWorks" bash
+```
+
+The installer refuses to reuse a directory that already has files in it but no `.spaceworks-version`
+marker, so it can't overwrite something by accident.
+
+### Who owns the install
+
+- **Run as a normal user** (recommended): the install belongs to you. `sudo` is used only for host
+  setup and creating directories.
+- **Pipe into `sudo bash`**: the install, its updates and any runner service belong to `root`.
+
+Later commands must run as the install's owner. If you run a script as someone else against a
+root-owned install, it re-runs itself through `sudo`; for any other owner it stops and tells you which
+user to sign in as.
+
+## Installing a fork
+
+The same command works for forks. Type your fork as `owner/name` when it asks for the repository, or
+pass it up front to skip the question:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | bash -s -- --repo YourName/SpaceWorks
+```
+
+Setting `SPACEWORKS_REPOSITORY=YourName/SpaceWorks` on the `bash` side of the pipe does the same.
+
+Before a fork can be installed it must have published a release. Run its **Continuous Release**
+workflow on `main` at least once. The fork's images are pulled from
+`ghcr.io/<lower-cased owner>/spaceworks-backend` (and `-frontend`, `-allinone`), so make those
+packages public on GitHub. The repository you choose is saved in `.env`, and every later update,
+installer re-run and deploy runner keeps following it.
+
+## Installer options
+
+| Option | What it does |
+| --- | --- |
+| `--repo owner/name` | Install from this GitHub repository without asking. |
+| `--help`, `-h` | Print the checklist and exit without changing anything. |
+| `SPACEWORKS_DIR` (environment) | Install directory. Default `/opt/spaceworks`. |
+| `SPACEWORKS_REPOSITORY` (environment) | Same as `--repo`. |
+
+There is no unattended mode for a fresh install: the questions always need a terminal.
+
+## Running it again
+
+Paste the same command on a server that already has SpaceWorks and you get a menu instead of a new
+install. It never re-runs first-time setup:
+
+| Choice | What it does |
+| --- | --- |
+| **1. Update to the latest release** | Backs up the database, moves to the newest release, runs migrations and restarts. Areas and data stay as they are. |
+| **2. Change modules only** | Turn feature areas on or off. Nothing is downloaded. |
+| **3. Update, then change modules** | Option 1 followed by option 2. |
+| **4. Cancel** (default) | Exit without changing anything. |
+| **5. Install or re-register the GitHub Actions runner** | Runs the runner setup only. |
+
+See [Updates](/install/updates/) for what an update does and how rollback works.
+
+## Building from source instead
+
+If you have a full checkout of the repository and want to build the images locally rather than pull
+published ones, run setup from the repository root:
+
+```bash
+bash setup.sh --build
+```
+
+It asks the same questions. The single-box shape isn't available with `--build`, because it relies
+on the published all-in-one image.
+
+## Next steps
+
+- [Understand every setup question](/install/setup-questions/)
+- [First run: sign in and check everything works](/install/first-run/)

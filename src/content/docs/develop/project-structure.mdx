@@ -1,0 +1,167 @@
+---
+title: Project structure
+description: A map of the SpaceWorks repository, the backend Django apps, the frontend directories and the files that are the single source of truth.
+sidebar:
+  order: 3
+---
+
+import { FileTree } from '@astrojs/starlight/components';
+
+SpaceWorks is a monorepo: a Django REST backend, a React frontend, and the deployment tooling that
+ships them. This page tells you where things live and which files you must go through rather than
+around.
+
+## Repository layout
+
+<FileTree>
+
+- backend/ Django 6 + DRF API
+  - apps/ one Django app per domain (see below)
+  - config/ project settings, root URLconf, WSGI/ASGI, logging, the Unfold admin sidebar
+  - scripts/ container entrypoint and host-orchestration helpers
+  - templates/
+  - Dockerfile
+  - manage.py
+  - pytest.ini
+  - requirements.txt
+- frontend/ React 19 + Vite + TypeScript
+  - src/
+  - scripts/ API client generator, PWA build plugins and checks
+  - public/
+  - openapi-schema.json checked-in OpenAPI snapshot
+  - nginx.conf production web server config
+  - Dockerfile
+  - package.json
+  - vite.config.ts
+- deploy/ Caddy, nginx and managed-hosting configuration
+- docker/ extra Compose layers (TLS, single box, API-only, external storage)
+- docs/ in-repo reference documents
+- scripts/ dev.sh, install, update, restore and release helpers
+- .github/ contributing guide, issue templates, workflows
+- docker-compose.yml production-shaped base stack
+- docker-compose.dev.yml live-reload development layer
+- docker-compose.prod.yml
+- Dockerfile.allinone single-box image
+- install.sh
+- setup.sh
+- setup.ps1
+- VERSION
+- CHANGELOG.md
+- LICENSE
+- NOTICE
+
+</FileTree>
+
+## Backend apps
+
+All apps live under `backend/apps/` and are registered in `INSTALLED_APPS` in
+`backend/config/settings.py`.
+
+| App | What it owns |
+| --- | --- |
+| `accounts` | The global `User` model, JWT auth with refresh cookies, MFA, social/OIDC/phone sign-in, device grants, and the **Auth and RBAC module** (`rbac.py`). |
+| `makerspaces` | The `Makerspace` tenant root, memberships and custom roles, waivers, domains and origin scope, the **module registry**, capabilities (features), setup areas, module install/uninstall/purge, archive and purge lifecycle, kiosk stations. |
+| `organizations` | Organizations that span several makerspaces, their memberships, invitations and public profiles. |
+| `presence` | Time-boxed presence sessions and the member eligibility gate (membership, waiver, presence). |
+| `inventory` | Products and individually tracked assets, the **Inventory Availability module** (`availability.py`), public catalogue serializers, `seed_demo`. |
+| `boxes` | QR codes and boxes, immutable box scans and QR scan events, QR rendering. |
+| `hardware_requests` | The **Request Workflow module**: requests, handover, returns, renewals, self-checkout, direct loans, the shared DRF exception handler. |
+| `evidence` | Evidence photo uploads, staging and finalization, retention and abandoned-upload cleanup. |
+| `audit` | The append-only `AuditLog`, `services.record()`, MAC signing, attestation and verification. |
+| `admin_api` | The staff REST surface used by the React console (inventory, staff, roles, imports, reports and more). |
+| `operations` | Containers, stock transfers, stocktakes, ledger, the report registry and exports, dashboards, reminders, the live-update publisher (`live.py`), `run_scheduled_tasks`. |
+| `machines` | Machines, operators, usage, consumables, certifications and the machine-service queue, including 3D printing. |
+| `maintenance` | Maintenance schedules, logs, documents and meters. |
+| `bookings` | Bookable spaces, bookings, recurrence and calendar feeds. |
+| `events` | Events, registrations, ticketing, check-in stations, certificates and feedback. |
+| `procurement` | The to-buy list and receipts. |
+| `warranty` | Warranties and warranty documents. |
+| `payments` | The payment **ledger**: charges, manual settlements, receipts, reconciliation and reports. Never separable. |
+| `payments_rail` | Online payment surfaces: checkout, the native payment sheet, Stripe Connect, refunds and provider webhooks. Separable. |
+| `integrations` | Outbound notifications: email outbox, Telegram, Slack, Mattermost, Discord, signed webhooks, native push. |
+| `notifications` | The in-app notification inbox, preferences and member broadcasts. |
+| `apiclients` | Signed server-to-server API clients and the protected-route scope registry. |
+| `devices` | Enrolled printers and label printers that authenticate with an Ed25519 key. |
+| `encryption` | Scoped, per-makerspace PII encryption and blind indexes. |
+| `data_export` | Space Manager data exports and the model/field classification registry. |
+| `backup` | Deployment and makerspace backup, restore and archive custody. |
+| `tenant_migration` | Moving one makerspace between deployments. |
+| `separability` | Tombstoning registries and their system checks. Must stay **last** in `INSTALLED_APPS`. |
+| `printing`, `roadmap` | Legacy apps kept for their tables and migrations. Printing now runs as a machine type under `machines`. |
+
+`backend/apps/` also holds a few shared modules that are not apps, such as `forms_schema/` (custom
+form validation), `object_storage.py`, `openapi.py` and `openapi_errors.py` (reusable OpenAPI error
+responses).
+
+## Single sources of truth
+
+Four files decide behaviour that the rest of the codebase must not duplicate:
+
+| File | It is the only place where... |
+| --- | --- |
+| `backend/apps/hardware_requests/workflow.py` | hardware request state transitions happen. It re-exports `submit_request`, `accept_request`, `reject_request`, `assign_box`, `issue_request`, `return_items` and `renew_loan` from their workflow modules. |
+| `backend/apps/inventory/availability.py` | available, reserved, issued, damaged and lost counts change. |
+| `backend/apps/makerspaces/module_registry.py` | module keys, defaults, groups and dependencies are defined. The entries themselves live in `module_registry_catalog.py`. |
+| `backend/apps/accounts/rbac.py` | authorization and makerspace scoping are decided. Every scoped staff query goes through it. |
+
+Others worth knowing:
+
+- `backend/apps/audit/services.py`: `record()`, the one writer for audit rows (and the live-update
+  publisher hook).
+- `backend/apps/makerspaces/capability_definitions.py`: the feature (sub-module) catalogue. Its
+  frontend mirror is `frontend/src/lib/features.ts`, and the two must stay in step.
+- `backend/apps/makerspaces/guards.py`: `require_module(...)` and `require_feature(...)`.
+- `backend/apps/separability/tombstones.py`: `SEPARABLE_APPS` and `TOMBSTONED_APPS` handling.
+- `backend/config/settings.py`: every environment variable, the Celery beat schedule and the DRF
+  defaults.
+
+## Frontend layout
+
+<FileTree>
+
+- frontend/src/
+  - main.tsx app root: QueryClientProvider, TenantProvider, router
+  - App.tsx
+  - AppRoutes.tsx route table for single-tenant and central (/m/:slug) deployments
+  - index.css theme tokens, fonts and base styles
+  - styles/ shared component layer (buttons, panels, titles)
+  - components/ shared components
+    - ui/ design-system primitives (DataTable, Modal, QrScanner, CameraCapture, ...)
+  - features/ one folder per product area
+    - auth/
+    - bookings/
+    - discovery/
+    - events/
+    - forms/
+    - inventory/ public catalogue, item pages, self-checkout
+    - kiosk/ kiosk stations and the offline handover queue
+    - members/ member area and member account
+    - notifications/
+    - organizations/
+    - payments/
+    - printing/
+    - staff/ the React staff console (panels, tabs, staffAccess.ts)
+    - stats/
+  - lib/ API client, tenant bootstrap, query client, live updates, theme
+  - generated/
+    - api.ts generated from openapi-schema.json
+  - types/
+  - test/ shared test setup and the axe accessibility helper
+  - sw.ts kiosk service worker
+
+</FileTree>
+
+| Path | Purpose |
+| --- | --- |
+| `src/lib/api.ts`, `src/lib/api/` | The hand-written API client: auth refresh, tenant bootstrap, publishable keys, typed errors. |
+| `src/lib/tenant.tsx` | Resolves the current makerspace from the route slug, a configured tenant token or the domain, and exposes its bootstrap (modules, features, branding). |
+| `src/lib/queryClient.ts` | The shared TanStack Query client and its defaults. |
+| `src/lib/live.ts`, `src/lib/useLiveUpdates.ts` | The Server-Sent Events client that invalidates queries on live hints. |
+| `src/lib/features.ts` | Mirror of the backend feature catalogue for the staff console. |
+| `src/features/staff/staffAccess.ts` | Derives which staff tabs a member can see from their actions. |
+
+## Next steps
+
+- [Backend conventions](/develop/backend-conventions/)
+- [Frontend](/develop/frontend/)
+- [Architecture](/develop/architecture/)
