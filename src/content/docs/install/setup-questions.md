@@ -1,6 +1,6 @@
 ---
 title: Setup questions
-description: Every question the SpaceWorks installer asks, in order, with its options, defaults and what each answer configures.
+description: Every question the Space Works installer asks, in order, with its options, defaults and what each answer configures.
 sidebar:
   order: 3
 ---

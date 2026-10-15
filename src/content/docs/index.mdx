@@ -1,14 +1,18 @@
 ---
-title: SpaceWorks documentation
-description: Install, configure, run and extend SpaceWorks, the open-source makerspace manager.
+title: Space Works documentation
+description: Install, configure, run and extend Space Works, the open-source makerspace manager.
 template: splash
 hero:
-  tagline: Free, self-hosted software for makerspaces and tool libraries. Track every tool, loan, print job and event, with evidence for every handover.
+  title: Less searching. More making.
+  tagline: Space Works documentation. Free, self-hosted software for makerspaces and tool libraries. Track every tool, loan, print job and event, with evidence for every handover.
+  image:
+    file: ../../assets/hero-box.svg
+    alt: An open box folded from orange and warm yellow faces.
   actions:
-    - text: Install SpaceWorks
+    - text: Install Space Works
       link: /get-started/quick-start/
       icon: right-arrow
-    - text: What is SpaceWorks?
+    - text: What is Space Works?
       link: /get-started/introduction/
       variant: minimal
     - text: View on GitHub
@@ -24,8 +28,13 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 <CardGrid>
   <LinkCard
     title="Quick start"
-    description="Run one command on a Linux server and have SpaceWorks live in minutes."
+    description="Run one command on a Linux server and have Space Works live in minutes."
     href="/get-started/quick-start/"
+  />
+  <LinkCard
+    title="Tutorials"
+    description="Follow your first install step by step, from server to makerspace."
+    href="/tutorials/first-install/"
   />
   <LinkCard
     title="Core concepts"

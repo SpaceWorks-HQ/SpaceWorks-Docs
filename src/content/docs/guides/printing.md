@@ -1,11 +1,11 @@
 ---
 title: 3D printing
-description: Run a 3D print service with SpaceWorks, from public print requests and the printer queue to filament pools, slicer estimates, pricing and handing finished prints over.
+description: Run a 3D print service with Space Works, from public print requests and the printer queue to filament pools, slicer estimates, pricing and handing finished prints over.
 sidebar:
   order: 6
 ---
 
-SpaceWorks runs 3D printing as a service queue: members ask for something to be printed, staff accept
+Space Works runs 3D printing as a service queue: members ask for something to be printed, staff accept
 the job, print it, record what it used and hand it over. Printing is a machine type on top of the
 general machine service queue, so the same ideas apply to laser cutters and other machines.
 
@@ -108,7 +108,7 @@ Prices are set per machine type, per makerspace, under **Machine types and prici
 - **Flat fee**: added to every job.
 - **Enable payment**: off by default. Nothing is charged until you tick it.
 
-When a priced job is **completed**, SpaceWorks records a charge against the requester for
+When a priced job is **completed**, Space Works records a charge against the requester for
 `rate × actual quantity + flat fee`, in the makerspace's default currency. This needs the **Track
 machine job charges** feature, which is on by default. A failed job creates no charge.
 

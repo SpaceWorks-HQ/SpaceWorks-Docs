@@ -1,11 +1,11 @@
 ---
 title: Environment variables
-description: Every environment variable SpaceWorks reads, grouped by area, with defaults, which ones are secrets, and which ones the bundled Docker stack passes through.
+description: Every environment variable Space Works reads, grouped by area, with defaults, which ones are secrets, and which ones the bundled Docker stack passes through.
 sidebar:
   order: 1
 ---
 
-SpaceWorks is configured in two places. **Deployment-wide settings** (secrets, domains, storage,
+Space Works is configured in two places. **Deployment-wide settings** (secrets, domains, storage,
 security limits) are environment variables, covered on this page. **Per-makerspace and platform
 settings** that staff change at runtime (SMTP for one space, Telegram rooms, Stripe keys, sign-in
 providers, login methods) live encrypted in the database and are edited in the staff console or the
@@ -99,7 +99,7 @@ stream. The bundled stack runs one for you.
 | --- | --- | --- | --- |
 | `CELERY_BROKER_URL` | empty | yes (`redis://redis:6379/0`) | Redis URL for background jobs. Empty means jobs run inline in the web request instead of on a worker. |
 | `CELERY_TASK_ALWAYS_EAGER` | `True` when no broker is set | no | Force inline execution. You rarely need to set this directly. |
-| `CELERY_RESULT_BACKEND` | empty | no | Where Celery stores task results. SpaceWorks does not need one. |
+| `CELERY_RESULT_BACKEND` | empty | no | Where Celery stores task results. Space Works does not need one. |
 | `CACHE_URL` | the broker URL | no | Redis URL for the cache. With neither this nor a broker, a database-backed cache is used so rate limits stay shared across workers. |
 | `LIVE_REDIS_URL` | the broker URL | no | Redis used by the live-update stream at `/api/v1/live/`. When none is available the stream answers 503 and the staff console falls back to polling. |
 | `LIVE_MAX_STREAM_SECONDS` | `3600` | no | Longest a single live stream stays open before the browser reconnects. |

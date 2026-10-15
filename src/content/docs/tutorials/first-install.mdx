@@ -1,0 +1,498 @@
+---
+title: "Tutorial: your first install"
+description: Take a brand-new Ubuntu 24.04 server to a running Space Works site on its own domain with HTTPS, answering every installer question along the way.
+sidebar:
+  order: 1
+---
+
+import { Steps, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+This tutorial starts with an empty rented server and ends with Space Works running on your own web
+address, with a padlock in the browser and you signed in as the administrator. You don't need to have
+run a server before. Every command is spelled out, and every installer question is answered with an
+example and a reason.
+
+We use one running example throughout. Swap in your own values as you go:
+
+| Thing | In this tutorial |
+| --- | --- |
+| Makerspace | **Kochi Makers Lab**, with the web slug `kochi-makers` |
+| Web address | `makers.example.org` |
+| Server's public IP address | `203.0.113.10` (a documentation-only address; yours will differ) |
+| Your admin login | `admin` |
+
+## What you'll build
+
+A Space Works server at `https://makers.example.org` with:
+
+- a valid HTTPS certificate that renews itself;
+- one makerspace, Kochi Makers Lab, with its public catalogue at `https://makers.example.org/m/kochi-makers`;
+- a **superadmin** account for you. The superadmin is the person who runs the whole server, as
+  opposed to staff who work inside one makerspace.
+
+## What you need
+
+- **A credit or debit card** to rent a small Linux server (a "VPS") from any hosting provider.
+- **A domain name** you control, such as `example.org`, and access to its DNS settings at your
+  domain registrar or DNS provider.
+- **An email address** for certificate notices and your admin account.
+- **A computer with a terminal**: Windows 10/11, macOS or Linux all work.
+
+## Time
+
+About 45 to 60 minutes of hands-on time. Add up to an hour of waiting if your DNS change is slow to
+spread; most take a few minutes.
+
+## Words you'll meet
+
+| Word | Meaning |
+| --- | --- |
+| **VPS** | A virtual private server: a Linux machine you rent by the month and control remotely. |
+| **SSH** | "Secure shell". A way to type commands on a remote server from your own computer, over an encrypted connection. |
+| **DNS A record** | An entry in your domain's settings that says "this name lives at this IP address". It's how `makers.example.org` finds `203.0.113.10`. |
+| **Docker** | Software that runs each part of Space Works (database, web server, API) in its own sealed box called a **container**. The installer sets it up for you. |
+| **sudo** | Linux's "run this as the administrator" command. It asks for your password. |
+| **Slug** | The short, lower-case, web-safe version of a name used in addresses, like `kochi-makers` in `/m/kochi-makers`. |
+| **Superadmin** | The server-wide administrator account. It can see and manage every makerspace. |
+
+## Part 1: get a server and a name
+
+<Steps>
+
+1. **Rent a server.** Choose any provider that offers Ubuntu virtual servers. When you create the
+   server, pick:
+
+   - **Image / operating system:** Ubuntu 24.04 LTS.
+   - **CPU type:** x86_64 (also called amd64 or "Intel/AMD"). Space Works' ready-made images are built
+     only for this type, so avoid ARM plans for this tutorial.
+   - **Disk:** the installer needs at least **8 GiB free**. Leave generous room on top, because photos
+     and backups grow over time.
+   - **Memory:** Space Works doesn't publish a minimum. The standard install runs a database, Redis,
+     object storage, the API, a background worker and a web server side by side, so don't pick the
+     very smallest plan.
+   - **Login:** an SSH key if the provider offers it, otherwise a root password.
+
+   When the server is ready, note its **public IPv4 address**. In this tutorial it's `203.0.113.10`.
+
+2. **Open the firewall ports.** If your provider has a firewall or "security group" for the server,
+   allow incoming **TCP 22** (SSH), **80** and **443** (web). Ports 80 and 443 must be reachable from the
+   whole internet, because that's how the free HTTPS certificate is issued.
+
+3. **Add two DNS A records.** At your DNS provider, create:
+
+   | Type | Name | Value |
+   | --- | --- | --- |
+   | `A` | `makers` (so the full name is `makers.example.org`) | `203.0.113.10` |
+   | `A` | `files.makers` (so the full name is `files.makers.example.org`) | `203.0.113.10` |
+
+   The first name is your website. The second is where Space Works' built-in file storage serves
+   photos and images when HTTPS is on, so it needs to point at the same server.
+
+4. **Check DNS has spread.** On your own computer, run:
+
+   ```bash title="On your computer"
+   nslookup makers.example.org
+   nslookup files.makers.example.org
+   ```
+
+   **You should see:** each answer ends with an `Address` line showing `203.0.113.10`. If you get an
+   error or an old address, wait a few minutes and try again. Don't continue until both names answer,
+   or the HTTPS certificate request will fail.
+
+</Steps>
+
+## Part 2: connect to the server
+
+<Steps>
+
+1. **Open a terminal and connect with SSH.**
+
+   <Tabs syncKey="os">
+   <TabItem label="Windows">
+
+   Open **PowerShell** from the Start menu. Windows 10 and 11 include the `ssh` command:
+
+   ```powershell title="PowerShell"
+   ssh root@203.0.113.10
+   ```
+
+   </TabItem>
+   <TabItem label="macOS">
+
+   Open **Terminal** (in Applications → Utilities):
+
+   ```bash title="Terminal"
+   ssh root@203.0.113.10
+   ```
+
+   </TabItem>
+   <TabItem label="Linux">
+
+   Open your terminal app:
+
+   ```bash title="Terminal"
+   ssh root@203.0.113.10
+   ```
+
+   </TabItem>
+   </Tabs>
+
+   The first time, SSH asks whether you trust the server's fingerprint. Type `yes`. Then enter the
+   root password if you weren't given a key.
+
+   Some providers create a user called `ubuntu` instead of letting you sign in as `root`. If so,
+   connect as `ssh ubuntu@203.0.113.10`, skip the next step (that user already has `sudo`) and use
+   `ubuntu` wherever this tutorial says `deploy`.
+
+   **You should see:** a welcome message from Ubuntu and a prompt ending in `#` (for root) or `$`.
+
+2. **Create an everyday user with sudo.** The installer works as root, but it's better to install as
+   a normal user: the install then belongs to that user, and `sudo` is used only for the few steps
+   that need it. Still signed in as root, create a user called `deploy`:
+
+   ```bash title="On the server, as root"
+   adduser deploy
+   usermod -aG sudo deploy
+   ```
+
+   `adduser` asks for a password (choose a strong one; you'll type it for `sudo`) and some optional
+   details you can skip with <kbd>Enter</kbd>.
+
+   If you signed in with an SSH key, copy it to the new user so you can sign in the same way:
+
+   ```bash title="On the server, as root"
+   mkdir -p /home/deploy/.ssh
+   cp ~/.ssh/authorized_keys /home/deploy/.ssh/
+   chown -R deploy:deploy /home/deploy/.ssh
+   chmod 700 /home/deploy/.ssh
+   chmod 600 /home/deploy/.ssh/authorized_keys
+   ```
+
+3. **Sign in again as `deploy`.** Type `exit` to close the root session, then:
+
+   ```bash title="On your computer"
+   ssh deploy@203.0.113.10
+   ```
+
+   Check that `sudo` works:
+
+   ```bash title="On the server"
+   sudo whoami
+   ```
+
+   **You should see:** it asks for the `deploy` password, then prints `root`.
+
+4. **Bring Ubuntu up to date** (recommended on a new server):
+
+   ```bash title="On the server"
+   sudo apt update && sudo apt upgrade -y
+   ```
+
+   If Ubuntu's own firewall (`ufw`) is turned on, allow SSH and web traffic too. `sudo ufw status`
+   tells you; if it says `inactive`, skip this:
+
+   ```bash title="On the server, only if ufw is active"
+   sudo ufw allow OpenSSH
+   sudo ufw allow 80/tcp
+   sudo ufw allow 443/tcp
+   ```
+
+</Steps>
+
+## Part 3: run the installer
+
+<Steps>
+
+1. **Start the installer.** As `deploy`, paste this one line:
+
+   ```bash title="On the server"
+   curl -fsSL https://raw.githubusercontent.com/SpaceWorks-HQ/SpaceWorks/main/install.sh | bash
+   ```
+
+   It first checks the machine without changing anything. It may ask for your `sudo` password
+   already, just to look inside `/opt`.
+
+   **You should see** lines like `Architecture: x86_64; host: linux/apt.` and
+   `Disk-space check passed.` On a fresh server it also tells you it will install curl, tar, Docker
+   Engine and Docker Compose V2 after you confirm.
+
+2. **Choose the repository.** It asks:
+
+   ```text
+   Which GitHub repository should this server install and update from?
+   ...
+   GitHub repository [SpaceWorks-HQ/SpaceWorks]:
+   ```
+
+   Press <kbd>Enter</kbd> to use the main project. It then downloads the latest release's questions
+   and prints `Pinned release:` followed by the exact release it will install.
+
+3. **Answer the questions.** You'll see `SpaceWorks deployment questions. Enter accepts the [default].`
+   The value in square brackets is the default; pressing <kbd>Enter</kbd> accepts it. Nothing is
+   installed until you confirm at the end, so you can't break anything here. The next section goes
+   through every question.
+
+</Steps>
+
+## Part 4: every question, answered
+
+The table below follows the installer's order. "Enter" means press <kbd>Enter</kbd> to accept the
+default.
+
+### Where and how it runs
+
+| Question | Answer | Why |
+| --- | --- | --- |
+| `Hosting model [1]` | Enter (`1`) | One community on this server, served at `/m/<slug>`. You can still add more makerspaces later. |
+| `Website [1]` | Enter (`1`) | Serve the website from this server too, not just the API. |
+| `HTTPS [1]` | `2` | Automatic HTTPS: a built-in web server called Caddy gets and renews a free certificate. Option 1 (plain HTTP) is only for a home network or a trial. |
+| `Public API/server domain [required]` | `makers.example.org` | Your website's name, without `https://`. Must match the DNS record you made. |
+| `HTTPS certificate email [required]` | `admin@example.org` | Where the certificate authority sends expiry or problem notices. Use an inbox you read. |
+| `How it runs [1]` | Enter (`1`) | Standard containers. The "single box" option can't be combined with HTTPS. |
+| `File storage [1]` | Enter (`1`) | Bundled object storage on this server, for evidence photos and public images. Nothing else to set up. |
+
+Because you chose HTTPS, you aren't asked for a separate web address: your domain is used.
+
+### Your makerspace
+
+| Question | Answer | Why |
+| --- | --- | --- |
+| `Name of your makerspace [My Makerspace]` | `Kochi Makers` | The **slug**, and so the public address, is made from this name: `Kochi Makers` becomes `kochi-makers`. Typing `Kochi Makers Lab` would give `kochi-makers-lab`. The console has no screen for changing a slug later, but it does let you change the name, so pick the name whose slug you want and add "Lab" in [the next tutorial](/tutorials/first-makerspace/). |
+
+### Feature areas
+
+Next come eight yes/no **areas**. Each one switches on a group of features and asks a few follow-up
+questions. You can change all of them later, so don't overthink it.
+
+| Question | Answer | Why |
+| --- | --- | --- |
+| `Use Inventory & lending? [Y/n]` | Enter (yes) | Lending tools is the heart of Space Works. |
+| `Maximum active loans per borrower [0]` | Enter | `0` means no limit. |
+| `Maximum outstanding items per borrower [0]` | Enter | `0` means no limit. |
+| `Default loan length (days) [7]` | Enter | A week is a sensible start. |
+| `Maximum renewals per loan [1]` | Enter | A borrower can extend once. |
+| `Length of each renewal (days) [7]` | Enter | Each extension adds a week. |
+| `Enable self-checkout? [Y/n]` | Enter (yes) | Lets signed-in borrowers check out tools that you mark as eligible, with a photo. Nothing is eligible until you say so. |
+| `Enable kiosk stations? [Y/n]` | Enter (yes) | Shared front-desk tablets. They stay unused until you set one up. |
+| `Loan deposit mode (none/fixed/per_product) [none]` | Enter | No deposits for now. |
+| `Late fee per day [0.00]` | Enter | No late fees. |
+| `Late fee cap (0 = uncapped) [0.00]` | Enter | Not used without late fees. |
+| `Late fee grace period (days) [0]` | Enter | Not used without late fees. |
+| `Default currency for charges [usd]` | `inr` | Kochi Makers Lab works in Indian rupees. Use your own three-letter code in lower case. |
+| `Borrow requests (Membership off) [accounts]` | Enter | Only people with a Space Works account can ask to borrow. |
+| `Use Machines? [Y/n]` | Enter (yes) | The lab has a 3D printer and a laser cutter. Say `n` if you have no machines. |
+| `Enforce machine certification gating? [Y/n]` | Enter (yes) | Members must be certified before using a machine type. |
+| `Certification expiry reminder lead (days; ...) [14]` | Enter | Two weeks' warning before a certification expires. |
+| `Maintenance reminder lead (days; ...) [7]` | Enter | A week's warning before maintenance is due. |
+| `Use Events? [y/N]` | Enter (no) | Not needed yet. |
+| `Use Bookings? [y/N]` | Enter (no) | Not needed yet. |
+| `Use Membership? [y/N]` | Enter (no) | Not needed yet. Turning it on limits borrowing to approved members. |
+| `Use Online payments? [y/N]` | Enter (no) | Card checkout. Money owed is still recorded without it. |
+| `Use Reports? [Y/n]` | Enter (yes) | Usage and loan reports. |
+| `Use Chat alerts? [y/N]` | Enter (no) | Telegram, Slack and similar alerts can be added later. |
+
+### Defaults for everyone
+
+| Question | Answer | Why |
+| --- | --- | --- |
+| `Label this as an organization instead of a makerspace? [y/N]` | Enter (no) | This only changes wording. |
+| `Makerspace timezone for local schedules [UTC]` | `Asia/Kolkata` | Due dates and reminders use local time. Use your own [IANA time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) name. |
+| `Quiet hours start (HH:MM) [22:00]` | Enter | Optional alerts wait overnight. |
+| `Quiet hours end (HH:MM; ...) [08:00]` | Enter | |
+| `Daily digests on by default? [y/N]` | Enter (no) | Members can turn digests on for themselves. |
+| `Require two-step sign-in (MFA) for staff? [y/N]` | Enter (no) | Keep it simple while you learn. You can require it later in Feature settings. |
+
+### Your admin account
+
+| Question | Answer | Why |
+| --- | --- | --- |
+| `Admin login username [admin]` | Enter | You'll sign in as `admin`. |
+| `Admin email [required]` | `admin@example.org` | Your email address. |
+| `Admin password (blank generates one) [auto-generate]` | Enter | A strong password is generated and printed once at the end. The typing is hidden either way. |
+
+### Extras
+
+| Question | Answer | Why |
+| --- | --- | --- |
+| `Google Web client ID [skip]` | Enter | "Sign in with Google" is optional. The line above the question shows the origin you'd register with Google later. |
+| `Install a GitHub Actions runner on this server for automatic deploys? [y/N]` | Enter (no) | Automatic deploys are for people who build their own releases. You'll update by re-running the installer instead. |
+
+The repository you picked at the start is repeated as `GitHub repository to follow`; there's nothing
+to answer there.
+
+## Part 5: confirm and wait
+
+<Steps>
+
+1. **Read the summary.** You'll see `Deployment summary` followed by your choices.
+
+   **You should see** lines like:
+
+   ```text
+   Deployment summary
+     Hosting model: one makerspace; website: yes; HTTPS: automatic Caddy HTTPS; shape: standard containers; storage: bundled Silo
+     Server: makers.example.org; platform: none; certificate email: admin@example.org; external sites: none
+     Makerspace: Kochi Makers; URL slug/subdomain: kochi-makers; edition: makerspace; request access: accounts
+     ...
+     API origin: https://makers.example.org. Point its DNS at this server/proxy.
+     Storage DNS: files.makers.example.org must point at this server/proxy.
+   ```
+
+   Check the slug says `kochi-makers` and the domain is spelled correctly. If anything is wrong,
+   answer `n` at the next question; nothing has been changed, and you can run the command again.
+
+2. **Confirm.** At `Proceed? [Y/n]:` press <kbd>Enter</kbd>.
+
+   The installer checks the ports it needs are free (`Required TCP ports 80 443 9000 9001 are free.`),
+   then, using `sudo` (it may ask for your password again), installs Docker, copies the release to `/opt/spaceworks`, writes your
+   private settings, downloads the container images and starts everything. The download usually takes
+   a few minutes.
+
+   If you weren't in the `docker` group yet, it adds you and carries on for this run.
+
+3. **Wait for the finish.** Near the end you'll see it create your account and makerspace.
+
+   **You should see:**
+
+   ```text
+   Created superadmin admin; created makerspace kochi-makers.
+   ```
+
+   then `All done!` followed by:
+
+   ```text
+     Website: https://makers.example.org (admin: admin)
+     API: https://makers.example.org/api
+     Control plane: /control/ on the backend only, through a private connection.
+     Generated admin password: ...   (save this now)
+   ```
+
+   The last line of all is `Installed SpaceWorks` with the version number and `/opt/spaceworks`.
+
+4. **Save the password now.** The generated admin password is shown **only once**. Copy it into a
+   password manager before you clear or close the terminal.
+
+</Steps>
+
+<Aside type="caution">
+If the installer stops with an error, read the message: it says what to fix and whether anything
+was changed. The common ones are listed in [Troubleshooting](/help/troubleshooting/).
+</Aside>
+
+## Part 6: open your site
+
+<Steps>
+
+1. **Wait for HTTPS.** Caddy asks for your certificate the first time it starts. This usually takes
+   under a minute, but can take a few if DNS is still settling.
+
+2. **Open the public site.** In your browser, go to `https://makers.example.org`.
+
+   **You should see** a padlock in the address bar, and the page moves to
+   `https://makers.example.org/m/kochi-makers`. When the server has only one public makerspace, the
+   home page goes straight to it. The catalogue is empty for now; you'll fill it in the next tutorial.
+
+3. **Sign in to the staff console.** Go to `https://makers.example.org/admin`.
+
+   **You should see** a **Sign in** card with **Username** and **Password** fields. Enter `admin`
+   and the generated password, then choose **Sign in**.
+
+4. **Set up two-step sign-in.** If the next screen says **Set up two-step sign-in**:
+
+   1. Install an authenticator app on your phone (any app that supports standard one-time codes).
+   2. Choose **Show enrollment QR and key** and scan the QR code with the app.
+   3. Type the six-digit code from the app into **Authenticator code** and choose **Verify**.
+   4. On **Save your recovery codes**, store the codes somewhere safe and separate from your
+      password, then choose **I saved my codes. Continue**.
+
+   If you went straight into the console instead, set it up anyway: the superadmin can change
+   everything on the server. Open **Admin → Settings**, choose
+   **Manage my authenticator and recovery codes**, and follow **Enroll authenticator**.
+
+   **You should see** the staff console, with menu groups such as **Operate**, **Inventory** and
+   **Admin**.
+
+</Steps>
+
+## Part 7: check it's healthy
+
+<Steps>
+
+1. **Sign out of SSH and back in.** The installer added `deploy` to the `docker` group, but your
+   current SSH session doesn't know that yet. Type `exit`, then `ssh deploy@203.0.113.10` again.
+
+2. **List the running services:**
+
+   ```bash title="On the server"
+   cd /opt/spaceworks
+   scripts/spaceworks-compose.sh bundled ps -a
+   ```
+
+   Always use this wrapper script rather than plain `docker compose`; it loads your settings safely.
+
+   **You should see** `db`, `redis`, `minio`, `backend`, `live`, `worker`, `beat`, `frontend` and
+   `caddy`, each `Up`, and `healthy` where a health check exists. The one-off start-up jobs are removed
+   after a successful install, so don't worry if they're not listed.
+
+3. **Ask the API if it's well:**
+
+   ```bash title="On the server or your computer"
+   curl -fsS https://makers.example.org/api/v1/health/
+   ```
+
+   **You should see:** `{"status":"ok"}`. For a deeper check, `/api/v1/health/readiness/` answers
+   with `"status":"ready"` when the database, migrations and keys all check out.
+
+</Steps>
+
+## Where your settings live
+
+Everything the installer wrote lives in `/opt/spaceworks`:
+
+| File | What it is |
+| --- | --- |
+| `/opt/spaceworks/.env` | Your private settings: domain, HTTPS, storage, and every generated password and key. Readable only by `deploy`. |
+| `/opt/spaceworks/.spaceworks-version` | The exact release installed. |
+| `/opt/spaceworks/.spaceworks-layer` | The container shape. For this tutorial it says `tls`. |
+| `/opt/spaceworks/backups/` | Where update backups are kept. |
+
+To look at `.env` without changing it:
+
+```bash title="On the server"
+less /opt/spaceworks/.env
+```
+
+Among other lines you'll find `PUBLIC_DOMAIN='makers.example.org'` and
+`PUBLIC_APP_BASE_URL='https://makers.example.org'`. Press <kbd>q</kbd> to leave.
+
+<Aside type="danger" title="Treat .env like a password">
+`.env` holds the keys that protect your data. Never paste it into a chat or a bug report, and copy it
+somewhere safe and offline. If you edit it by hand, the wrapper refuses to run until you record the
+change; see [Docker Compose](/install/docker-compose/) before editing.
+</Aside>
+
+## If something went wrong
+
+- **The site won't load over HTTPS, or the browser warns about the certificate.** DNS probably
+  doesn't point at the server yet, or ports 80/443 are blocked. Re-run the `nslookup` checks, check
+  your provider's firewall, then run `scripts/spaceworks-compose.sh bundled restart caddy` in
+  `/opt/spaceworks`.
+- **`TCP port 80 is already in use.`** Something else (often a web server the provider pre-installed)
+  is using the port. Stop it, then run the installer again.
+- **Docker says permission is denied when you run the wrapper.** Your SSH session predates the
+  `docker` group change. Sign out and back in.
+- **`The app did not become ready in time.`** Read the backend logs with
+  `scripts/spaceworks-compose.sh bundled logs --tail 100 backend` from `/opt/spaceworks`. Your answers
+  are kept on the server; Troubleshooting explains how to fix the cause and retry.
+- **You lost the generated password.** Someone with server access can set a new one; see
+  [First run](/install/first-run/).
+
+More symptoms and fixes are in [Troubleshooting](/help/troubleshooting/).
+
+## Next
+
+- [Tutorial: set up your first makerspace](/tutorials/first-makerspace/): name, staff, categories,
+  your first item and its QR label.
+- [Turn on backups](/install/backup-restore/) before you rely on the server.
+- [Set up email](/configure/email/) so invitations and password resets can be sent.
+- [Every setup question in detail](/install/setup-questions/).

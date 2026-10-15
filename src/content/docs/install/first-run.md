@@ -1,11 +1,11 @@
 ---
 title: First run
-description: After installing SpaceWorks, sign in as the superadmin, check the server is healthy, send test alerts and get your first makerspace ready.
+description: After installing Space Works, sign in as the superadmin, check the server is healthy, send test alerts and get your first makerspace ready.
 sidebar:
   order: 8
 ---
 
-When the installer finishes, SpaceWorks is running with your superadmin account and your first
+When the installer finishes, Space Works is running with your superadmin account and your first
 makerspace already created. This page walks you through checking that everything works.
 
 ## What the installer printed
@@ -40,7 +40,7 @@ server, so keep it for administration and give day-to-day staff their own accoun
 
 ### Two-step sign-in
 
-Superadmins must use two-step sign-in. When you first sign in, SpaceWorks asks you to set up an
+Superadmins must use two-step sign-in. When you first sign in, Space Works asks you to set up an
 authenticator app. It then shows ten one-time **recovery codes**, only once. Save them somewhere
 separate from your password.
 
@@ -111,7 +111,7 @@ two-step verification is required before the control plane opens.
 
 ## Send test alerts
 
-SpaceWorks works without email, but you'll want it for password resets and notifications.
+Space Works works without email, but you'll want it for password resets and notifications.
 
 1. **Set up SMTP.** As the superadmin, open **Admin → Platform settings → Platform email** and enter
    your SMTP host, port, username, password and sender address. This is used whenever a makerspace
@@ -153,4 +153,4 @@ the password once and makes you change it at first sign-in.
 
 - [Set up your makerspace](/guides/makerspace-setup/): inventory, public visibility, staff and roles
 - [Turn modules on or off](/guides/modules/)
-- [Keep SpaceWorks updated](/install/updates/)
+- [Keep Space Works updated](/install/updates/)

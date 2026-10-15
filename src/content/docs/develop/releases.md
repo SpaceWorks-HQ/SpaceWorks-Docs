@@ -1,11 +1,11 @@
 ---
 title: Releases
-description: How SpaceWorks versions, changelog entries, release builds, container images and image verification work.
+description: How Space Works versions, changelog entries, release builds, container images and image verification work.
 sidebar:
   order: 10
 ---
 
-SpaceWorks uses continuous releases: **every commit that reaches `main` is a releasable build**. A
+Space Works uses continuous releases: **every commit that reaches `main` is a releasable build**. A
 GitHub Actions workflow builds the container images, publishes them to the GitHub Container Registry
 (GHCR), and creates a GitHub Release. Self-hosted installations update by pulling one of those exact
 builds. This page is mostly for maintainers, but it is useful for anyone who wants to understand what

@@ -1,11 +1,11 @@
 ---
 title: Security
-description: The secrets SpaceWorks needs and how to protect and rotate them, HTTPS and header settings, rate limits and lockout, control-plane access, account restriction, and a hardening checklist.
+description: The secrets Space Works needs and how to protect and rotate them, HTTPS and header settings, rate limits and lockout, control-plane access, account restriction, and a hardening checklist.
 sidebar:
   order: 8
 ---
 
-SpaceWorks holds personal data, payment records and a legal-grade trail of who borrowed what. This
+Space Works holds personal data, payment records and a legal-grade trail of who borrowed what. This
 page lists the secrets that protect it, the settings that harden a deployment, and the protections
 that are always on. Variable details are in [Environment variables](/configure/environment-variables/).
 
@@ -71,7 +71,7 @@ Always on, with or without HTTPS: `X-Content-Type-Options: nosniff`, `X-Frame-Op
 `Referrer-Policy: same-origin`, and a Content Security Policy.
 
 :::caution[Plain HTTP signs staff out]
-The refresh-token cookie is `Secure`, and SpaceWorks refuses session refresh from plain `http://`
+The refresh-token cookie is `Secure`, and Space Works refuses session refresh from plain `http://`
 origins other than `localhost`. A plain-HTTP install reached by IP or domain therefore cannot keep
 staff signed in beyond the 15-minute access token. Use HTTPS for any real deployment.
 :::

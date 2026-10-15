@@ -1,0 +1,466 @@
+---
+title: "Tutorial: your first API call"
+description: Explore the Space Works API in Swagger, read the public catalogue with curl, Python and JavaScript, then create an API client and send your first signed request.
+sidebar:
+  order: 4
+---
+
+import { Steps, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Everything the Space Works website does, it does through a REST API, and you can call that same API
+from your own code. In this tutorial you make your first calls to the public catalogue, first with
+no credentials at all, then as a registered **API client** that signs every request.
+
+The running example is the makerspace **Kochi Makers Lab** (slug `kochi-makers`) at
+`https://makers.example.org`, which lends an **Arduino Uno** (5 in stock). Every step also has a
+**Local dev stack** tab, so you can follow along on your own machine against the seeded demo
+makerspace `alpha-lab`.
+
+## What you'll build
+
+- A working request to the public inventory endpoint from Swagger, curl, Python and JavaScript.
+- An API client with the `public:read` scope.
+- A small script that sends a correctly **signed** request and gets `200 OK`.
+
+## What you need
+
+- A Space Works you can reach: either a real install (here, `https://makers.example.org`) or the
+  [local dev stack](/develop/local-development/) with demo data seeded.
+- `curl` (built into macOS, Linux and Windows 10+).
+- For the code samples: Python 3.9+ with the `requests` package (`pip install requests`), and/or
+  Node.js 18 or newer.
+- For Part 2 only: a staff account with the **manage makerspace** permission, such as a Space Manager.
+  An Inventory Manager can request API access but cannot create a client.
+
+## Time
+
+About 25 minutes.
+
+## Part 1: read the public catalogue
+
+The public catalogue needs no account. That makes it the easiest place to start.
+
+<Steps>
+
+1. **Open the interactive docs.** Every Space Works server serves Swagger UI, generated from the
+   code, so it always matches the version you are talking to.
+
+   <Tabs>
+   <TabItem label="makers.example.org">
+
+   Open `https://makers.example.org/docs/` in your browser.
+
+   </TabItem>
+   <TabItem label="Local dev stack">
+
+   Open `http://localhost:8000/docs/` in your browser.
+
+   </TabItem>
+   </Tabs>
+
+   **You should see:** a long list of operations grouped by tag, such as **Public inventory**,
+   **Auth** and **Admin requests**.
+
+2. **Try the inventory endpoint in Swagger.** Under **Public inventory**, open
+   **List public inventory products** (`GET /api/v1/public/{makerspace_slug}/inventory/`).
+   Choose **Try it out**, enter `kochi-makers` (or `alpha-lab` locally) in **makerspace_slug** and
+   `arduino` in **q**. Leave the optional `X-Nonce` and `X-Publishable-Key` headers empty. Choose
+   **Execute**.
+
+   **You should see:** response code `200` and a JSON body. Swagger also shows the equivalent `curl`
+   command, which is a handy way to learn the URL format.
+
+3. **Make the same call with curl.** Open a terminal and run:
+
+   <Tabs>
+   <TabItem label="makers.example.org">
+
+   ```bash
+   curl -s "https://makers.example.org/api/v1/public/kochi-makers/inventory/?q=arduino"
+   ```
+
+   </TabItem>
+   <TabItem label="Local dev stack">
+
+   ```bash
+   curl -s "http://localhost:8000/api/v1/public/alpha-lab/inventory/?q=arduino"
+   ```
+
+   </TabItem>
+   </Tabs>
+
+   **You should see** something like this (the `id` values on your server will differ):
+
+   <Tabs>
+   <TabItem label="makers.example.org">
+
+   ```json
+   {
+     "count": 1,
+     "next": null,
+     "previous": null,
+     "results": [
+       {
+         "id": 12,
+         "name": "Arduino Uno",
+         "description": "Microcontroller board for beginner electronics projects.",
+         "category_id": 2,
+         "category_name": "Microcontrollers",
+         "category_slug": "microcontrollers",
+         "borrowing_terms": "Loan period: 7 days.",
+         "availability": { "mode": "status_only", "label": "Available" },
+         "image_url": null
+       }
+     ]
+   }
+   ```
+
+   </TabItem>
+   <TabItem label="Local dev stack">
+
+   ```json
+   {
+     "count": 1,
+     "next": null,
+     "previous": null,
+     "results": [
+       {
+         "id": 1,
+         "name": "Arduino Uno R4",
+         "description": "Demo stock for Alpha Robotics Lab.",
+         "category_id": 2,
+         "category_name": "Microcontrollers",
+         "category_slug": "microcontrollers",
+         "borrowing_terms": "Loan period: 7 days.",
+         "availability": { "mode": "exact_count", "count": 18, "label": "Available" },
+         "image_url": null
+       }
+     ]
+   }
+   ```
+
+   </TabItem>
+   </Tabs>
+
+</Steps>
+
+### Reading the response
+
+Every list endpoint in Space Works wraps its results in the same **pagination envelope**:
+
+| Field | Meaning |
+| --- | --- |
+| `count` | How many results match in total, across all pages |
+| `next` | The URL of the next page, or `null` on the last page |
+| `previous` | The URL of the previous page, or `null` on the first page |
+| `results` | Up to 24 items on this page |
+
+Inside each item, `availability` is shaped by the makerspace's privacy choices for that product.
+Kochi Makers Lab shows a status only (`Available`, `Limited` or `Unavailable`), while the demo
+makerspace publishes exact counts, so its item also carries `count`. When counts are hidden
+entirely, `availability` is `null`. `borrowing_terms` always starts with the loan period. Storage
+locations, box IDs and QR codes are never in the public API.
+
+The endpoint also accepts `category=<slug>`, `sort=name|most_used|popular` and `page=<n>`.
+
+## Do it from code
+
+The same request, from a program. Both samples follow `next` so they work however many items the
+catalogue has.
+
+<Tabs>
+<TabItem label="Python">
+
+```python title="list_inventory.py"
+import requests
+
+BASE_URL = "https://makers.example.org"   # local: "http://localhost:8000"
+SLUG = "kochi-makers"                     # local: "alpha-lab"
+
+url = f"{BASE_URL}/api/v1/public/{SLUG}/inventory/"
+params = {"q": "arduino"}
+
+while url:
+    response = requests.get(url, params=params, timeout=10)
+    response.raise_for_status()
+    page = response.json()
+    for item in page["results"]:
+        availability = item["availability"] or {}
+        print(item["name"], "-", availability.get("label", "hidden"))
+    url = page["next"]   # already includes the query string
+    params = None
+```
+
+Run it with `python list_inventory.py`.
+
+</TabItem>
+<TabItem label="JavaScript">
+
+```js title="listInventory.mjs"
+const BASE_URL = "https://makers.example.org"; // local: "http://localhost:8000"
+const SLUG = "kochi-makers";                   // local: "alpha-lab"
+
+let url = `${BASE_URL}/api/v1/public/${SLUG}/inventory/?q=arduino`;
+
+while (url) {
+  const response = await fetch(url, { headers: { Accept: "application/json" } });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const page = await response.json();
+  for (const item of page.results) {
+    console.log(item.name, "-", item.availability?.label ?? "hidden");
+  }
+  url = page.next;
+}
+```
+
+Run it with `node listInventory.mjs` (Node.js 18 or newer has `fetch` built in).
+
+</TabItem>
+</Tabs>
+
+**You should see:** `Arduino Uno - Available` (locally, `Arduino Uno R4 - Available`).
+
+## Part 2: become a signed API client
+
+Anonymous calls are fine for trying things out, but a real integration should identify itself. An
+**API client** is a credential for software rather than a person. A signed client gets its own rate
+limit (120 requests a minute on the default tier), and an operator can make signatures mandatory for
+every public call by turning on `API_CLIENT_AUTH_REQUIRED`. Signing now means your code keeps working
+when that happens.
+
+<Steps>
+
+1. **Make sure the server can store client secrets.** Secrets are encrypted with the
+   `API_CLIENT_ENC_KEY` setting. The production setup writes this key for you.
+
+   <Tabs>
+   <TabItem label="makers.example.org">
+
+   Nothing to do.
+
+   </TabItem>
+   <TabItem label="Local dev stack">
+
+   The dev stack does not set it. Generate a key, add it to a `.env` file at the root of your
+   Space Works checkout, and restart the stack:
+
+   ```bash
+   echo "API_CLIENT_ENC_KEY=$(openssl rand -base64 32 | tr '+/' '-_')" >> .env
+   ./scripts/dev.sh up
+   ```
+
+   </TabItem>
+   </Tabs>
+
+2. **Sign in to the staff console** as someone with the manage makerspace permission.
+
+   <Tabs>
+   <TabItem label="makers.example.org">
+
+   Open `https://makers.example.org/admin/` and sign in as a Space Manager of Kochi Makers Lab.
+
+   </TabItem>
+   <TabItem label="Local dev stack">
+
+   Open `http://localhost:5000/admin/` and sign in as `alpha_manager` with password `demo12345`.
+
+   </TabItem>
+   </Tabs>
+
+3. **Open Admin → API access.**
+
+   **You should see:** an **API clients** form on the left and **Existing clients** on the right.
+
+4. **Fill in the form:**
+
+   | Field | Value |
+   | --- | --- |
+   | **Client label** | `Catalogue sync script` |
+   | **Allowed browser origins** | `https://makers.example.org` (locally `http://localhost:5000`) |
+   | **Scopes** | Tick **Public read** only |
+
+   At least one origin is required. A server-side script like yours sends no `Origin` header, so
+   this value only matters if the client is ever used from a browser.
+
+5. **Choose Create API client.**
+
+   **You should see:** "Copy this secret now — it will not be shown again." with the secret below
+   it. Choose **Copy** and store it somewhere safe, such as a password manager. Then choose **Done**.
+
+   <Aside type="caution" title="The secret is shown exactly once">
+   Space Works stores the secret encrypted and can never display it again. If you lose it, use
+   **Rotate secret** on the client to get a new one. Never put the secret in browser code or commit
+   it to a repository.
+   </Aside>
+
+6. **Copy the client ID.** In **Existing clients**, your new client shows its label and, underneath,
+   its client ID, which starts with `ck_`.
+
+</Steps>
+
+## Part 3: send a signed request
+
+A signed request carries four headers: `X-Client-Id`, `X-Timestamp`, `X-Nonce` and `X-Signature`.
+The signature proves you hold the secret without ever sending it.
+
+To compute it, join these five values with a newline (`\n`):
+
+```text
+METHOD        GET
+FULL_PATH     /api/v1/public/kochi-makers/inventory/?q=arduino
+TIMESTAMP     current Unix time in seconds, same as X-Timestamp
+NONCE         a fresh random string, same as X-Nonce
+BODY          the raw request body (empty for GET)
+```
+
+Then take the HMAC-SHA256 of that text, keyed with your client secret, and send it as lowercase hex
+in `X-Signature`. Three details trip up most people:
+
+- `FULL_PATH` includes the query string, exactly as you send it, but no scheme or host.
+- A `GET` still ends with a newline followed by the empty body.
+- The timestamp must be within 5 minutes of the server's clock, and each nonce can be used once.
+
+<Steps>
+
+1. **Put the credentials in environment variables**, so they stay out of your code.
+
+   <Tabs>
+   <TabItem label="macOS / Linux">
+
+   ```bash
+   export SPACEWORKS_CLIENT_ID="ck_your_client_id"
+   export SPACEWORKS_CLIENT_SECRET="<your-client-secret>"
+   ```
+
+   </TabItem>
+   <TabItem label="Windows PowerShell">
+
+   ```powershell
+   $env:SPACEWORKS_CLIENT_ID = "ck_your_client_id"
+   $env:SPACEWORKS_CLIENT_SECRET = "<your-client-secret>"
+   ```
+
+   </TabItem>
+   </Tabs>
+
+2. **Save one of these scripts.** Change `BASE_URL` and `SLUG` for the local dev stack.
+
+   <Tabs>
+   <TabItem label="Python">
+
+   ```python title="signed_request.py"
+   import hashlib
+   import hmac
+   import os
+   import secrets
+   import time
+
+   import requests
+
+   BASE_URL = "https://makers.example.org"   # local: "http://localhost:8000"
+   SLUG = "kochi-makers"                     # local: "alpha-lab"
+   CLIENT_ID = os.environ["SPACEWORKS_CLIENT_ID"]
+   CLIENT_SECRET = os.environ["SPACEWORKS_CLIENT_SECRET"]
+
+   method = "GET"
+   full_path = f"/api/v1/public/{SLUG}/inventory/?q=arduino"
+   body = b""
+   timestamp = str(int(time.time()))
+   nonce = secrets.token_urlsafe(16)
+
+   message = b"\n".join(
+       [method.encode(), full_path.encode(), timestamp.encode(), nonce.encode(), body]
+   )
+   signature = hmac.new(CLIENT_SECRET.encode(), message, hashlib.sha256).hexdigest()
+
+   response = requests.get(
+       BASE_URL + full_path,
+       headers={
+           "X-Client-Id": CLIENT_ID,
+           "X-Timestamp": timestamp,
+           "X-Nonce": nonce,
+           "X-Signature": signature,
+       },
+       timeout=10,
+   )
+   print(response.status_code)
+   print(response.json())
+   ```
+
+   </TabItem>
+   <TabItem label="JavaScript">
+
+   ```js title="signedRequest.mjs"
+   import { createHmac, randomBytes } from "node:crypto";
+
+   const BASE_URL = "https://makers.example.org"; // local: "http://localhost:8000"
+   const SLUG = "kochi-makers";                   // local: "alpha-lab"
+   const CLIENT_ID = process.env.SPACEWORKS_CLIENT_ID;
+   const CLIENT_SECRET = process.env.SPACEWORKS_CLIENT_SECRET;
+
+   const method = "GET";
+   const fullPath = `/api/v1/public/${SLUG}/inventory/?q=arduino`;
+   const body = "";
+   const timestamp = String(Math.floor(Date.now() / 1000));
+   const nonce = randomBytes(16).toString("base64url");
+
+   const message = [method, fullPath, timestamp, nonce, body].join("\n");
+   const signature = createHmac("sha256", CLIENT_SECRET).update(message, "utf8").digest("hex");
+
+   const response = await fetch(BASE_URL + fullPath, {
+     method,
+     headers: {
+       "X-Client-Id": CLIENT_ID,
+       "X-Timestamp": timestamp,
+       "X-Nonce": nonce,
+       "X-Signature": signature,
+     },
+   });
+   console.log(response.status);
+   console.log(await response.json());
+   ```
+
+   </TabItem>
+   </Tabs>
+
+3. **Run it** with `python signed_request.py` or `node signedRequest.mjs`.
+
+   **You should see:** `200` followed by the same JSON you got from curl in Part 1.
+
+4. **Prove the signature is really checked.** Change one character of `SPACEWORKS_CLIENT_SECRET` and
+   run the script again.
+
+   **You should see:** `401` and `{"detail": "Invalid client signature."}`. Because the request
+   carries an `X-Nonce`, Space Works never falls back to treating a bad signature as anonymous, so the
+   earlier `200` really was your signed client. Put the correct secret back.
+
+</Steps>
+
+<Aside type="tip" title="Sign the bytes you send">
+For a `POST`, serialize the JSON body once, sign that exact string, and send the same string. If your
+HTTP library re-serializes or reorders anything after you sign, the signature no longer matches.
+[API clients](/api/api-clients/#check-your-implementation) has a fixed test vector you can use to
+check your signing code offline.
+</Aside>
+
+## If something went wrong
+
+| What you see | Likely cause |
+| --- | --- |
+| `404` from the inventory URL | Wrong slug, the trailing `/` after `inventory` is missing, or the makerspace keeps its catalogue private |
+| `400` naming a `module` or `feature` | The public inventory module or lending is switched off for that makerspace |
+| **Create API client** fails with a server error | `API_CLIENT_ENC_KEY` is not set (see Part 2, step 1); the backend log names it |
+| You see **Request API access** instead of the create form | Your account lacks the manage makerspace permission |
+| `401 Invalid client signature.` with the right secret | Clock drift, a reused nonce, a path signed without its query string, or the client lacks **Public read** |
+| `429` | You hit the rate limit; wait for the `Retry-After` seconds |
+
+The `401` deliberately looks the same for every failure. Work through the checklist in
+[API clients](/api/api-clients/#errors), and see [Troubleshooting](/help/troubleshooting/) for
+server-side problems.
+
+## Next
+
+- [API overview](/api/overview/): base URLs, errors, rate limits and every endpoint group.
+- [API clients](/api/api-clients/): scopes, `POST` requests, secret rotation and enforcement.
+- [Authentication](/api/authentication/): call staff and member endpoints as a signed-in person.
+- [Tutorial: your first loan](/tutorials/first-loan/): see what the catalogue numbers mean in practice.

@@ -288,5 +288,5 @@ A quick checklist when you get `401`:
 
 - [API overview](/api/overview/)
 - [Authentication](/api/authentication/)
-- [Webhooks](/api/webhooks/): the opposite direction, SpaceWorks calling your server.
+- [Webhooks](/api/webhooks/): the opposite direction, Space Works calling your server.
 - [Security settings](/configure/security/)

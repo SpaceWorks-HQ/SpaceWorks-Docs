@@ -5,7 +5,7 @@ sidebar:
   order: 7
 ---
 
-SpaceWorks keeps more promises about data than a typical Django app. Records can be exported by a
+Space Works keeps more promises about data than a typical Django app. Records can be exported by a
 Space Manager, moved between deployments, encrypted per makerspace, purged module by module, and some
 tables can never be updated or deleted at all. Each of those features has a registry, and a new model
 or column has to be placed in each one deliberately. This page walks through that checklist.

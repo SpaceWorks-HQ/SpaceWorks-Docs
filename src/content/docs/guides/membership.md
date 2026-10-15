@@ -5,7 +5,7 @@ sidebar:
   order: 8
 ---
 
-The **Membership** module (`membership`) is the community layer of SpaceWorks: who belongs to your
+The **Membership** module (`membership`) is the community layer of Space Works: who belongs to your
 makerspace, how they join, what they pay, and what they see. It is optional. Without it, people can
 still sign in, borrow, book and register for events, and staff can still create walk-in records.
 

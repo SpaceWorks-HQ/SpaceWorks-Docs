@@ -1,11 +1,11 @@
 ---
 title: Webhooks
-description: Receive signed JSON webhooks from SpaceWorks, verify their signatures, and handle retries and duplicate deliveries.
+description: Receive signed JSON webhooks from Space Works, verify their signatures, and handle retries and duplicate deliveries.
 sidebar:
   order: 4
 ---
 
-Signed webhooks let SpaceWorks call **your** HTTPS endpoint whenever something happens in a makerspace: a loan is accepted, a booking is confirmed, a printer goes offline, a payment is received. They use the same notification matrix, retry logic and delivery log as the Slack, Discord, Mattermost and Telegram channels, but deliver structured, signed JSON instead of a chat message.
+Signed webhooks let Space Works call **your** HTTPS endpoint whenever something happens in a makerspace: a loan is accepted, a booking is confirmed, a printer goes offline, a payment is received. They use the same notification matrix, retry logic and delivery log as the Slack, Discord, Mattermost and Telegram channels, but deliver structured, signed JSON instead of a chat message.
 
 ## Set up a webhook
 
@@ -127,7 +127,7 @@ An event only reaches your endpoint if its module is enabled for the makerspace 
 
 ## The request
 
-SpaceWorks sends a `POST` with these headers:
+Space Works sends a `POST` with these headers:
 
 | Header | Value |
 | --- | --- |
@@ -268,9 +268,9 @@ Self-hosted deployments have no cap on webhook deliveries. On a managed (hosted)
 
 ## Idempotency
 
-Delivery is **at least once**, not exactly once. A worker can crash after your server accepted a request but before SpaceWorks recorded the success, and that delivery will be sent again.
+Delivery is **at least once**, not exactly once. A worker can crash after your server accepted a request but before Space Works recorded the success, and that delivery will be sent again.
 
-- **De-duplicate on the delivery ID** (`id` in the body, `X-SpaceWorks-Delivery` in the headers). If you receive webhooks from more than one SpaceWorks deployment, key on deployment plus ID.
+- **De-duplicate on the delivery ID** (`id` in the body, `X-SpaceWorks-Delivery` in the headers). If you receive webhooks from more than one Space Works deployment, key on deployment plus ID.
 - Each destination gets its own delivery ID for the same event, so two destinations pointing at the same URL will each deliver.
 - Make handlers safe to re-run: "set status to accepted" rather than "increment a counter".
 - Use `occurred_at`, not the time you received the request, when ordering events. Retries can arrive out of order.
@@ -278,5 +278,5 @@ Delivery is **at least once**, not exactly once. A worker can crash after your s
 ## Related
 
 - [Notifications](/configure/notifications/): the notification matrix and other channels.
-- [API clients](/api/api-clients/): calling SpaceWorks from your server.
+- [API clients](/api/api-clients/): calling Space Works from your server.
 - [API overview](/api/overview/)

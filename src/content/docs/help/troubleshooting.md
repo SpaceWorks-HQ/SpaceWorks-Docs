@@ -1,12 +1,12 @@
 ---
 title: Troubleshooting
-description: Symptoms, causes and fixes for common SpaceWorks install, update, storage, email and login problems.
+description: Symptoms, causes and fixes for common Space Works install, update, storage, email and login problems.
 sidebar:
   order: 2
 ---
 
 Each entry below starts with what you see, then explains the likely cause and the fix. Most messages
-are quoted exactly as SpaceWorks prints them, so you can search this page for the text on your
+are quoted exactly as Space Works prints them, so you can search this page for the text on your
 screen.
 
 Run every command on the server, from the install directory (`/opt/spaceworks` unless you chose
@@ -65,9 +65,9 @@ database identity, migrations or an encryption key.
 | `Unsupported Linux distribution '…'` | The distribution family isn't Debian/Ubuntu, RHEL/Fedora/Alma/Rocky, Arch or SUSE. | Use a supported distribution. See [Requirements](/install/requirements/). |
 | `Docker Desktop is installed but not running. Start it and wait until it is ready, then rerun; no state was changed.` | macOS or Windows, and Docker Desktop is stopped. | Start Docker Desktop, wait until it's ready, then run the installer again. |
 | `Docker is inaccessible. Run sudo systemctl start docker; …` | The Docker daemon is stopped, or your user can't reach its socket. | Run `sudo systemctl start docker`. For non-root use, run `sudo usermod -aG docker $(id -un)`, sign out and back in, then run the installer again. |
-| `At least 8 GiB free is required; … has … MiB.` | Not enough free disk where SpaceWorks installs. | Free space, or set `SPACEWORKS_DIR` to a larger disk. |
-| `TCP port N is already in use. Free it before installing.` | Another service is listening on a port SpaceWorks needs. | See [Ports already in use](#ports-already-in-use). |
-| `… already contains state but has no .spaceworks-version marker. Refusing to reuse or overwrite it.` | The install directory isn't empty and isn't a SpaceWorks install. | Choose an empty directory with `SPACEWORKS_DIR`, or move the existing files away. |
+| `At least 8 GiB free is required; … has … MiB.` | Not enough free disk where Space Works installs. | Free space, or set `SPACEWORKS_DIR` to a larger disk. |
+| `TCP port N is already in use. Free it before installing.` | Another service is listening on a port Space Works needs. | See [Ports already in use](#ports-already-in-use). |
+| `… already contains state but has no .spaceworks-version marker. Refusing to reuse or overwrite it.` | The install directory isn't empty and isn't a Space Works install. | Choose an empty directory with `SPACEWORKS_DIR`, or move the existing files away. |
 | `No published release found for owner/name. …` | The repository name is wrong, or a fork has never published a release. | Check the `owner/name` spelling. For a fork, run its **Continuous Release** workflow on `main` once. |
 | `The app did not become ready in time. Check logs with: … logs backend` | The stack started, but the backend never passed its readiness check. | Read the `backend` logs and the start-up jobs (`ps -a`), then fix the cause. Your private answers file is kept, so you can retry. |
 
@@ -147,7 +147,7 @@ does appear there, record and restart as in
 
 ### `SpaceWorks entrypoint refused startup: …`
 
-**Cause:** every SpaceWorks process starts through a safety check that compares the database it's
+**Cause:** every Space Works process starts through a safety check that compares the database it's
 about to use with the host's records, and checks whether that kind of process is allowed in the
 deployment's current state. Common reasons:
 
@@ -412,7 +412,7 @@ before normal use resumes. While a restore runs, you may see
 postgresql-client-N; the client major must match the database server.`
 
 **Cause:** these operations refuse to use a PostgreSQL client whose major version differs from the
-server's, because a mismatched client can write archives that can't be restored. The SpaceWorks
+server's, because a mismatched client can write archives that can't be restored. The Space Works
 images include clients 16 and 17, which match the bundled PostgreSQL 16. You'll usually see this
 error when the backend runs outside those images, or against a managed database with another major
 version.

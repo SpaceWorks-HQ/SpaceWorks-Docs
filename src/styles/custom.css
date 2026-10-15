@@ -1,39 +1,384 @@
-/* SpaceWorks brand colours mapped onto Starlight's theme tokens.
-   Teal is the accent; the light theme sits on the brand cream. */
-
+﻿/* Brand palette and shared type. */
 :root {
-  --sl-color-accent-low: #0b3a35;
-  --sl-color-accent: #2fb3a3;
-  --sl-color-accent-high: #c9efe9;
-  --sl-color-white: #ffffff;
-  --sl-color-gray-1: #eef1ef;
-  --sl-color-gray-2: #c4ccc9;
-  --sl-color-gray-3: #92a19c;
-  --sl-color-gray-4: #5b6863;
-  --sl-color-gray-5: #34433f;
-  --sl-color-gray-6: #1d2f2c;
-  --sl-color-black: #11201e;
+  --sw-ink: #142c2a;
+  --sw-teal: #006e63;
+  --sw-orange: #ff7447;
+  --sw-citron: #dfff8f;
+  --sw-sky: #b5cdff;
+  --sw-yellow: #ffd447;
+  --sw-cream: #fff4e8;
+  --sl-font: 'Outfit Variable', var(--sl-font-system);
+  --sl-font-mono: var(--sl-font-system-mono);
+  --sl-text-body: 1rem;
+  --sl-line-height: 1.5;
+  --sl-content-width: 56rem;
+  --sw-toc-width: 16rem;
+  --sl-content-pad-x: 1rem;
+
+  /* Badges retain the tested text/fill pairs in both themes. */
+  --sl-badge-default-bg: var(--sw-teal);
+  --sl-badge-default-border: var(--sw-teal);
+  --sl-badge-default-text: var(--sw-cream);
+  --sl-badge-note-bg: var(--sw-sky);
+  --sl-badge-note-border: var(--sw-sky);
+  --sl-badge-note-text: var(--sw-ink);
+  --sl-badge-success-bg: var(--sw-citron);
+  --sl-badge-success-border: var(--sw-citron);
+  --sl-badge-success-text: var(--sw-ink);
+  --sl-badge-tip-bg: var(--sw-citron);
+  --sl-badge-tip-border: var(--sw-citron);
+  --sl-badge-tip-text: var(--sw-ink);
+  --sl-badge-caution-bg: var(--sw-yellow);
+  --sl-badge-caution-border: var(--sw-yellow);
+  --sl-badge-caution-text: var(--sw-ink);
+  --sl-badge-danger-bg: var(--sw-orange);
+  --sl-badge-danger-border: var(--sw-orange);
+  --sl-badge-danger-text: var(--sw-ink);
 }
 
+/* Dark surfaces and semantic colours. */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --sl-color-white: var(--sw-cream);
+  --sl-color-gray-1: #efe6db;
+  --sl-color-gray-2: #c9d2cb;
+  --sl-color-gray-3: #a9b9b1;
+  --sl-color-gray-4: #728b81;
+  --sl-color-gray-5: #3c5650;
+  --sl-color-gray-6: #203d37;
+  --sl-color-gray-7: #19332e;
+  --sl-color-black: var(--sw-ink);
+  --sl-color-accent-low: #0b3a35;
+  --sl-color-accent: #65d6c2;
+  --sl-color-accent-high: #a6e8dc;
+  --sl-color-text: var(--sw-cream);
+  --sl-color-text-accent: var(--sl-color-accent);
+  --sl-color-text-invert: var(--sw-cream);
+  --sl-color-bg: var(--sw-ink);
+  --sl-color-bg-nav: #0f2321;
+  --sl-color-bg-sidebar: var(--sl-color-bg-nav);
+  --sl-color-bg-inline-code: var(--sl-color-gray-6);
+  --sl-color-bg-accent: var(--sw-teal);
+  --sl-color-hairline: var(--sl-color-gray-5);
+  --sl-color-hairline-light: var(--sl-color-hairline);
+  --sl-color-hairline-shade: var(--sl-color-hairline);
+  --sl-color-blue: var(--sw-sky);
+  --sl-color-blue-low: #20364a;
+  --sl-color-blue-high: var(--sw-sky);
+  --sl-color-green: var(--sw-citron);
+  --sl-color-green-low: #2b3d29;
+  --sl-color-green-high: var(--sw-citron);
+  --sl-color-purple: var(--sl-color-green);
+  --sl-color-purple-low: var(--sl-color-green-low);
+  --sl-color-purple-high: var(--sl-color-green-high);
+  --sl-color-orange: var(--sw-yellow);
+  --sl-color-orange-low: #403b24;
+  --sl-color-orange-high: var(--sw-yellow);
+  --sl-color-red: var(--sw-orange);
+  --sl-color-red-low: #432f29;
+  --sl-color-red-high: var(--sw-orange);
+  --sw-panel: #19332e;
+  --sw-hover: var(--sl-color-gray-6);
+  --sw-focus: var(--sl-color-accent);
+  --sw-search-bg: var(--sl-color-bg-nav);
+  --sw-search-text: var(--sw-cream);
+}
+
+/* Light is selected by ThemeProvider before the page paints. */
 :root[data-theme='light'] {
-  --sl-color-accent-low: #d3eee9;
-  --sl-color-accent: #006e63;
-  --sl-color-accent-high: #0b3a35;
-  --sl-color-white: #142c2a;
-  --sl-color-gray-1: #1d2f2c;
+  color-scheme: light;
+  --sl-color-white: var(--sw-ink);
+  --sl-color-gray-1: var(--sw-ink);
   --sl-color-gray-2: #34433f;
   --sl-color-gray-3: #5b6863;
-  --sl-color-gray-4: #92a19c;
+  --sl-color-gray-4: #728078;
   --sl-color-gray-5: #d5d0c6;
   --sl-color-gray-6: #efe6db;
-  --sl-color-gray-7: #faf3ea;
-  --sl-color-black: #fffaf3;
+  --sl-color-gray-7: #faf0e4;
+  --sl-color-black: var(--sw-cream);
+  --sl-color-accent-low: #e0efea;
+  --sl-color-accent: var(--sw-teal);
+  --sl-color-accent-high: #0b3a35;
+  --sl-color-text: var(--sw-ink);
+  --sl-color-bg: var(--sw-cream);
+  --sl-color-bg-nav: #ffffff;
+  --sl-color-bg-sidebar: var(--sw-cream);
+  --sl-color-blue-low: var(--sw-sky);
+  --sl-color-blue-high: var(--sw-ink);
+  --sl-color-green-low: var(--sw-citron);
+  --sl-color-green-high: var(--sw-ink);
+  --sl-color-orange-low: var(--sw-yellow);
+  --sl-color-orange-high: var(--sw-ink);
+  --sl-color-red-low: var(--sw-orange);
+  --sl-color-red-high: var(--sw-ink);
+  --sw-panel: #ffffff;
+  --sw-search-bg: var(--sw-citron);
+  --sw-search-text: var(--sw-ink);
 }
 
-:root {
-  --sl-content-width: 50rem;
+/* Type, reading panels and keyboard focus. */
+body {
+  font-size: var(--sl-text-body);
+  line-height: var(--sl-line-height);
+}
+
+:where(h1, h2, h3, h4, h5, h6),
+.card .title,
+.sl-link-card .title {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+button, input, select, textarea,
+.sl-badge {
+  font-family: var(--sl-font);
+}
+
+:focus-visible {
+  outline: 2px solid var(--sw-focus);
+  outline-offset: 3px;
+}
+
+:root[data-has-sidebar] main > .content-panel {
+  background: var(--sw-panel);
+}
+
+.sl-markdown-content {
+  overflow-wrap: anywhere;
+}
+
+/* Header search and navigation. */
+site-search > button[data-open-modal] {
+  background: var(--sw-search-bg);
+  color: var(--sw-search-text);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+site-search > button[data-open-modal]:hover {
+  border-color: var(--sl-color-text-accent);
+}
+
+site-search > button[data-open-modal] kbd {
+  background: transparent;
+  color: inherit;
+}
+
+.sidebar-content a {
+  border-radius: 999px;
+  padding: 0.45em 0.85em;
+}
+
+.sidebar-content a:hover {
+  background: var(--sw-hover);
+}
+
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover {
+  background: var(--sw-teal);
+  color: var(--sl-color-text-invert);
+}
+
+/* Tables and numbered instructions. */
+.sl-markdown-content table {
+  max-width: 100%;
+  font-size: 0.9375rem;
+}
+
+.sl-markdown-content :is(th, td) {
+  border-bottom: 1px solid var(--sl-color-hairline);
+  padding-block: 0.8rem;
+}
+
+.sl-markdown-content th {
+  color: var(--sl-color-text-accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.sl-markdown-content tr {
+  background: transparent;
+}
+
+.sl-steps > li::before {
+  background: var(--sw-teal);
+  color: var(--sw-cream);
+  box-shadow: none;
+}
+
+/* Quiet cards, badges and brand asides. */
+.card,
+.sl-link-card {
+  min-width: 0;
+  background: var(--sw-panel);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: none;
+}
+
+.sl-link-card:hover {
+  background: var(--sw-hover);
+  border-color: var(--sl-color-text-accent);
+}
+
+.card .icon {
+  color: var(--sl-color-text-accent);
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.sl-badge {
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.starlight-aside {
+  border-radius: 0 10px 10px 0;
+}
+
+/* Keep text on light asides in the tested ink/fill pair. */
+:root[data-theme='light'] .starlight-aside {
+  --sl-color-text-accent: var(--sw-ink);
+  --sl-color-bg-inline-code: transparent;
+}
+
+.starlight-aside :is(a, th),
+.starlight-aside a:hover {
+  color: var(--sl-color-asides-text-accent);
+}
+
+:root[data-theme='light'] .starlight-aside :not(.expressive-code *) > code {
+  background: transparent;
+}
+
+/* Buttons and the single bold home-page moment. */
+.sl-link-button {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.sl-link-button.primary,
+.sl-link-button.primary:hover {
+  background: var(--sw-teal);
+  border-color: var(--sw-teal);
+  color: var(--sw-cream);
+}
+
+:root:not([data-has-sidebar]) .hero {
+  --sw-focus: var(--sw-cream);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  padding: 2rem 1rem;
+  background: var(--sw-teal);
+  color: var(--sw-cream);
+  border-radius: 20px;
 }
 
 .hero h1 {
-  letter-spacing: -0.02em;
+  font-family: 'Unbounded Variable', var(--sl-font);
+  font-weight: 600;
+  font-size: clamp(1.65rem, 3.8vw, 3.25rem);
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  color: var(--sw-cream);
+  text-wrap: balance;
+}
+
+.hero .tagline {
+  color: var(--sw-cream);
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 48ch;
+}
+
+.hero > .stack {
+  min-width: 0;
+  order: -1;
+  text-align: start;
+}
+
+.hero .copy {
+  align-items: flex-start;
+}
+
+.hero > img {
+  width: min(75%, 17rem);
+  height: auto;
+}
+
+.hero .actions {
+  justify-content: flex-start;
+  gap: 1rem 1.5rem;
+}
+
+.hero .sl-link-button {
+  font-size: 0.9375rem;
+  padding-block: 0.8rem;
+}
+
+.hero .sl-link-button.primary,
+.hero .sl-link-button.primary:hover {
+  background: var(--sw-cream);
+  border-color: var(--sw-cream);
+  color: var(--sw-ink);
+}
+
+.hero .sl-link-button:is(.secondary, .minimal) {
+  color: var(--sw-cream);
+}
+
+.hero .sl-link-button:is(.secondary, .minimal):hover {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+/* Preserve 16px mobile gutters; wide layouts share a simple grid. */
+@media (max-width: 49.999rem) {
+  /* Splash pages have no mobile menu, so retain their header theme toggle. */
+  :root:not([data-has-sidebar]) .header .right-group {
+    display: flex;
+  }
+
+  :root:not([data-has-sidebar]) .header .right-group .social-icons {
+    display: none;
+  }
+
+  /* Keep the hero within the first screen on phones. */
+  .hero > img {
+    width: 7.5rem;
+  }
+
+  .hero .actions {
+    gap: 0.25rem 1.25rem;
+  }
+}
+
+@media (min-width: 50rem) {
+  :root:not([data-has-sidebar]) .hero {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+    padding: 3.5rem 2.5rem;
+  }
+
+  .hero > img {
+    width: 100%;
+  }
+}
+
+/* Wide screens: a narrow, fixed "On this page" column, and the reading column
+   centred in the remaining space. Starlight's default hands all spare width to
+   the right column, which leaves a large gap beside the text. */
+@media (min-width: 72rem) {
+  :root[data-has-sidebar][data-has-toc] .right-sidebar-container {
+    width: var(--sw-toc-width);
+  }
+
+  :root[data-has-sidebar][data-has-toc] .main-pane {
+    --sl-content-margin-inline: auto;
+    width: calc(100% - var(--sw-toc-width));
+  }
 }

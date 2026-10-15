@@ -1,6 +1,6 @@
 ---
 title: FAQ
-description: Short answers to the questions people ask most about running, hosting and extending SpaceWorks.
+description: Short answers to the questions people ask most about running, hosting and extending Space Works.
 sidebar:
   order: 1
 ---
@@ -14,9 +14,9 @@ through the `scripts/spaceworks-compose.sh` wrapper rather than plain `docker co
 
 ## General
 
-### What is SpaceWorks?
+### What is Space Works?
 
-SpaceWorks is an open-source, self-hosted manager for makerspaces. It covers inventory and tool
+Space Works is an open-source, self-hosted manager for makerspaces. It covers inventory and tool
 lending, machines and 3D printing, events, bookings, membership and reports. Every tool handover
 leaves evidence behind: QR scans, photos, remarks and an append-only audit log. One install can host
 many makerspaces, each kept separate from the others. Read the
@@ -36,7 +36,7 @@ repository's
 
 ### Can I use it commercially? What does the AGPL ask of me?
 
-Yes. The AGPL lets you use, study, share and modify SpaceWorks for any purpose, commercial or not.
+Yes. The AGPL lets you use, study, share and modify Space Works for any purpose, commercial or not.
 It is a network copyleft license: if you run a **modified** version and let people use it over a
 network, you must offer those users the source code of your modified version under the same
 license. Running an unmodified release carries no such duty. This is a summary, not legal advice, so
@@ -44,14 +44,14 @@ read the license itself if your situation is unusual.
 
 ### Who builds it?
 
-SpaceWorks started in the TinkerSpace Kochi community and is developed in the open on
+Space Works started in the TinkerSpace Kochi community and is developed in the open on
 [GitHub](https://github.com/SpaceWorks-HQ/SpaceWorks) by its contributors. No contributor license
 agreement is required.
 
 ### Is there a hosted version?
 
 The project is built for self-hosting, and the documentation covers running it yourself. Because
-SpaceWorks is multi-tenant, a makerspace without a server can also run as a tenant on another
+Space Works is multi-tenant, a makerspace without a server can also run as a tenant on another
 makerspace's install. The code also has a managed, multi-tenant platform mode with tenant subdomains,
 switched on with `PLATFORM_DOMAIN_SUFFIX`, so you can run a hosted service for other spaces yourself.
 See [Cloud deployment](/install/cloud/).
@@ -96,7 +96,7 @@ a source build needs.
 
 ### Can I put it behind my own reverse proxy?
 
-Yes. Choose **existing reverse proxy** when the installer asks about HTTPS. SpaceWorks then listens
+Yes. Choose **existing reverse proxy** when the installer asks about HTTPS. Space Works then listens
 on `127.0.0.1:8080`. Forward your public domain there and preserve the `Host` header, the client
 forwarding headers and `X-Forwarded-Proto: https`. With bundled storage, also forward
 `files.<your-domain>` to `127.0.0.1:9000` and raise your proxy's upload size limit for evidence
@@ -143,7 +143,7 @@ In S3-compatible object storage. By default that's the bundled Silo container (t
 of the archived MinIO), with its data in the `minio_data` Docker volume. Evidence photos and print
 files go in a **private** bucket (`evidence` by default). Catalogue item photos and makerspace
 logos go in a separate **public-read** bucket (`public-images` by default). The two must have
-different names. SpaceWorks refuses to start if they collide.
+different names. Space Works refuses to start if they collide.
 
 ### Are evidence photos public?
 
@@ -168,7 +168,7 @@ Yes, in several ways:
 - **Whole makerspace**: a superadmin can create a data export of a makerspace from the staff
   console.
 - **Moving servers**: a superadmin can export one makerspace into an encrypted archive and import
-  it on another SpaceWorks deployment.
+  it on another Space Works deployment.
 - **Members**: members can download their own data. This needs the Membership area, member accounts
   and the member self-export feature turned on for that makerspace.
 
@@ -184,7 +184,7 @@ space then permanently deletes its records and uploaded files. Purging is a supe
 ### How do I handle a GDPR-style request?
 
 Members can download their own data with the self-export feature, and can leave a makerspace from
-their account. Be aware that SpaceWorks is built for accountability. Audit logs are append-only, and
+their account. Be aware that Space Works is built for accountability. Audit logs are append-only, and
 the records of attached evidence and QR scans are immutable. There is no one-click erasure for one
 person's history, so decide how your space answers erasure requests and keep that policy in mind when
 you enable [evidence retention](/configure/evidence-retention/).
@@ -365,7 +365,7 @@ object storage separately.
 
 ## Development
 
-### What is SpaceWorks built with?
+### What is Space Works built with?
 
 Django 6 and Django REST Framework, React 19 with Vite, TypeScript, Tailwind CSS 4 and TanStack
 Query, PostgreSQL 16, Celery with Redis, and S3-compatible object storage. It ships as published

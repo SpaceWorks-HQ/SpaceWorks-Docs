@@ -1,11 +1,11 @@
 ---
 title: Authentication
-description: How browsers, scripts and native apps sign in to the SpaceWorks API, how permissions are checked, and what 401 and 403 responses look like.
+description: How browsers, scripts and native apps sign in to the Space Works API, how permissions are checked, and what 401 and 403 responses look like.
 sidebar:
   order: 2
 ---
 
-SpaceWorks has one user model for staff and members. People sign in with a password, a phone code, Google, Apple or your own OpenID Connect provider, and the API hands back a short-lived **JWT access token** that you send as a Bearer token. This page explains those flows from an API caller's point of view.
+Space Works has one user model for staff and members. People sign in with a password, a phone code, Google, Apple or your own OpenID Connect provider, and the API hands back a short-lived **JWT access token** that you send as a Bearer token. This page explains those flows from an API caller's point of view.
 
 There are three other credential types, each covered on its own page:
 
@@ -145,7 +145,7 @@ Social providers are switched on by the operator (see [Authentication settings](
 
 Use this when your app already gets an ID token from the provider's own SDK.
 
-1. Ask SpaceWorks for a single-use nonce:
+1. Ask Space Works for a single-use nonce:
 
    ```json
    POST /api/v1/auth/social/nonce

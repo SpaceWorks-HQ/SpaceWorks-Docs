@@ -1,11 +1,11 @@
 ---
 title: Contributing
-description: How to report issues, propose changes, prepare a pull request and license your contribution to SpaceWorks.
+description: How to report issues, propose changes, prepare a pull request and license your contribution to Space Works.
 sidebar:
   order: 9
 ---
 
-SpaceWorks is free and open-source software, and contributions of every size are welcome: bug
+Space Works is free and open-source software, and contributions of every size are welcome: bug
 reports, documentation fixes, translations of rough edges into clear behaviour, and new features.
 This page explains how to get a change from an idea to a merged pull request.
 
@@ -120,7 +120,7 @@ merges the branch into `dev`; maintainers later promote `dev` to `main` through 
 
 ## License and credit
 
-SpaceWorks is licensed under the
+Space Works is licensed under the
 [GNU Affero General Public License v3 or later](https://github.com/SpaceWorks-HQ/SpaceWorks/blob/main/LICENSE)
 (AGPL-3.0-or-later).
 

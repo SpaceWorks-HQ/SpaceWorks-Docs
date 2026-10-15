@@ -1,11 +1,11 @@
 ---
 title: Evidence retention
-description: Decide how long handover photo bytes are kept, what SpaceWorks keeps forever, what an expired photo looks like, and how optional cleanup of never-used uploads works.
+description: Decide how long handover photo bytes are kept, what Space Works keeps forever, what an expired photo looks like, and how optional cleanup of never-used uploads works.
 sidebar:
   order: 7
 ---
 
-Every handover in SpaceWorks leaves evidence: QR scans, issue and return photos, remarks and audit
+Every handover in Space Works leaves evidence: QR scans, issue and return photos, remarks and audit
 entries. Photos are the bulky part. Retention lets you delete old **photo bytes** from storage after
 a set time while keeping the **record** of each handover forever. Both cleanup mechanisms are off by
 default; nothing is deleted until you turn them on.
@@ -93,7 +93,7 @@ It needs **two switches**, both off by default:
 
 What it will and will not delete:
 
-- It deletes only upload slots that SpaceWorks has **proven** were never used by any handover,
+- It deletes only upload slots that Space Works has **proven** were never used by any handover,
   self-checkout, direct handout or problem report.
 - Attached evidence is never deleted.
 - Photos recorded before this feature existed, and photos brought in by an import, are never

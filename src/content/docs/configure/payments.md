@@ -5,7 +5,7 @@ sidebar:
   order: 6
 ---
 
-SpaceWorks separates two things that are easy to confuse:
+Space Works separates two things that are easy to confuse:
 
 - **Charge tracking** records that someone owes money: a booking fee, an event ticket, a machine job,
   membership dues, a loan deposit or a late fee. It needs **no gateway** and is on by default.
@@ -63,7 +63,7 @@ ask for these keys during setup.
 
 ### Create the Stripe webhook
 
-The webhook is how SpaceWorks learns that a payment succeeded. Each makerspace has its own endpoint,
+The webhook is how Space Works learns that a payment succeeded. Each makerspace has its own endpoint,
 keyed by its **makerspace code** (shown in the staff console header and under
 **Admin → API access**):
 
@@ -122,7 +122,7 @@ status: pending, paid online, paid offline, waived or cancelled.
   returns a loan deposit after the loan is closed. Card refunds go back through Stripe.
 
 Settlement receipts and refunds are **append-only**. To fix a mistyped reference or date, use
-**amend**: SpaceWorks keeps the original and adds a correction, so both stay visible. Amounts and
+**amend**: Space Works keeps the original and adds a correction, so both stay visible. Amounts and
 currencies cannot be amended.
 
 Payment problems never block the work itself: completing a machine job or confirming a booking

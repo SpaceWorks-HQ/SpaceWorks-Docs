@@ -1,11 +1,11 @@
 ---
 title: Requirements
-description: What you need before installing SpaceWorks — hardware, operating system, Docker, ports, DNS, email and object storage.
+description: What you need before installing Space Works — hardware, operating system, Docker, ports, DNS, email and object storage.
 sidebar:
   order: 1
 ---
 
-SpaceWorks runs as a set of Docker containers on one server. The installer checks most of the
+Space Works runs as a set of Docker containers on one server. The installer checks most of the
 requirements on this page for you and refuses to change anything until they pass, but it helps to
 have them sorted out before you start.
 
@@ -14,7 +14,7 @@ have them sorted out before you start.
 For a first install on your local network you need:
 
 - a 64-bit x86_64 (amd64) Linux machine you can `sudo` on, with internet access;
-- at least **8 GiB of free disk** where SpaceWorks will be installed (`/opt/spaceworks` by default);
+- at least **8 GiB of free disk** where Space Works will be installed (`/opt/spaceworks` by default);
 - `curl` (or `wget`) and `tar`.
 
 That's it. The installer sets up Docker itself on Linux. Everything else on this page, like a domain
@@ -38,7 +38,7 @@ Any other Linux distribution is refused with a clear message.
 
 ### Windows
 
-On Windows, SpaceWorks needs Docker Desktop and a bash shell. What works depends on which shell you
+On Windows, Space Works needs Docker Desktop and a bash shell. What works depends on which shell you
 use:
 
 | Task | Git Bash | WSL2 | PowerShell |
@@ -94,7 +94,7 @@ so plan your storage with that in mind.
 During install and updates the server needs outbound HTTPS access to:
 
 - `github.com` and `api.github.com`, to find and download releases;
-- `ghcr.io`, for the SpaceWorks images (`spaceworks-backend`, `spaceworks-frontend` and, for the
+- `ghcr.io`, for the Space Works images (`spaceworks-backend`, `spaceworks-frontend` and, for the
   single box, `spaceworks-allinone`), all built for amd64;
 - Docker Hub, for the supporting images: `postgres:16`, `redis:7-alpine`, `pgsty/silo`, plus
   `caddy` and `nginx` when you use HTTPS or API-only mode.
@@ -129,7 +129,7 @@ Point DNS at the server **before** you install with HTTPS, so the first certific
 
 ## Outbound email (optional)
 
-SpaceWorks does not need email to run. Without it, password-reset emails can't be sent, so the
+Space Works does not need email to run. Without it, password-reset emails can't be sent, so the
 "Forgot password?" link is hidden and staff reset passwords for people from the console instead.
 
 When you're ready, add an SMTP server. You can set an instance-wide one in the staff console under

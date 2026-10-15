@@ -1,18 +1,18 @@
 ---
 title: Domains and TLS
-description: Serve SpaceWorks over plain HTTP, automatic HTTPS with Caddy, your own reverse proxy, API-only or as a hosted platform, and give makerspaces their own domains.
+description: Serve Space Works over plain HTTP, automatic HTTPS with Caddy, your own reverse proxy, API-only or as a hosted platform, and give makerspaces their own domains.
 sidebar:
   order: 5
 ---
 
-The **HTTPS** and **hosting model** questions in setup decide how SpaceWorks is reached from a
+The **HTTPS** and **hosting model** questions in setup decide how Space Works is reached from a
 browser. This page explains each option, what it sets up and what DNS it needs.
 
 | Setup | Who terminates TLS | Public ports |
 | --- | --- | --- |
 | [Plain HTTP](#plain-http-local-network-or-trial) | Nobody | `80` (plus `9000` for bundled storage) |
 | [Automatic HTTPS](#automatic-https-with-caddy) | Built-in Caddy | `80`, `443` |
-| [Your own reverse proxy](#behind-your-own-reverse-proxy) | Your proxy | None. SpaceWorks listens on `127.0.0.1:8080` |
+| [Your own reverse proxy](#behind-your-own-reverse-proxy) | Your proxy | None. Space Works listens on `127.0.0.1:8080` |
 | [API only](#api-only-website-hosted-elsewhere) | Caddy or your proxy | As above |
 | [Hosted platform](#hosted-platform-with-tenant-subdomains) | Built-in Caddy, on demand | `80`, `443` |
 
@@ -75,7 +75,7 @@ publishes.
 ## Behind your own reverse proxy
 
 Choose **I already run a reverse proxy** if something else (nginx, Traefik, HAProxy, a tunnel)
-already owns ports 80 and 443. SpaceWorks then publishes only on loopback:
+already owns ports 80 and 443. Space Works then publishes only on loopback:
 
 | Name | Forward to |
 | --- | --- |
@@ -89,7 +89,7 @@ Your proxy must:
 - allow uploads as large as your evidence and print files;
 - not buffer `/api/v1/live/`, which is a long-lived Server-Sent Events stream.
 
-Setup sets `TRUSTED_PROXY_COUNT=2`, because requests pass through your proxy and then SpaceWorks'
+Setup sets `TRUSTED_PROXY_COUNT=2`, because requests pass through your proxy and then Space Works'
 own nginx before reaching Django. Rate limits rely on this count to find the real client address,
 so if you put another proxy or CDN in front, raise it to match.
 

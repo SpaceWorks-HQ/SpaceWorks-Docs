@@ -1,11 +1,11 @@
 ---
 title: Loans
-description: The full hardware lending lifecycle in SpaceWorks, from a member's request through review, issue, return, partial returns and accountability, plus self-checkout, direct handouts, reminders and loan charges.
+description: The full hardware lending lifecycle in Space Works, from a member's request through review, issue, return, partial returns and accountability, plus self-checkout, direct handouts, reminders and loan charges.
 sidebar:
   order: 5
 ---
 
-Lending is the heart of SpaceWorks, and it is built around one idea: **every handover leaves
+Lending is the heart of Space Works, and it is built around one idea: **every handover leaves
 evidence**. A tool cannot leave the shelf without a QR scan and a photo, and it cannot come back
 without a photo and a written remark. Everything is written to the audit log.
 
@@ -110,7 +110,7 @@ A return is never blocked by unpaid fees or a lapsed membership.
 
 ## Damage, loss and accountability
 
-When a return records damaged or missing units, SpaceWorks writes an **accountability record**
+When a return records damaged or missing units, Space Works writes an **accountability record**
 against the borrower, linked to the return photo. These records cannot be edited or deleted.
 
 **Insights → Accountability** (needs `view_audit`) shows overdue loans, problems reported on public
@@ -118,7 +118,7 @@ returns, repeat offenders and restricted requesters. Restricting a borrower is a
 a superadmin can use **Restrict requester** there, with a reason. Nothing is restricted automatically.
 See [Roles and permissions](/guides/roles-and-permissions/#restricted-and-suspended-accounts).
 
-SpaceWorks does not raise an automatic charge for damage or loss. If you took a deposit, it stays on
+Space Works does not raise an automatic charge for damage or loss. If you took a deposit, it stays on
 the ledger for staff to refund or keep, as your policy says.
 
 ## QR self-checkout

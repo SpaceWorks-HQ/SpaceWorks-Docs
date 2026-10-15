@@ -5,7 +5,7 @@ sidebar:
   order: 6
 ---
 
-SpaceWorks tests external behaviour: what an API returns, what a workflow refuses, what a page
+Space Works tests external behaviour: what an API returns, what a workflow refuses, what a page
 renders. This page covers the test runners and checks available in the repository and how to use
 them on your change.
 

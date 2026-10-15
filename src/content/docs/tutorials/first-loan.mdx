@@ -1,0 +1,413 @@
+---
+title: "Tutorial: your first loan, start to finish"
+description: Follow one Arduino Uno from a member's borrow request through review, issue, use and return, and watch the stock counts and audit log change at every step.
+sidebar:
+  order: 3
+---
+
+import { Steps, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+In this tutorial you run one complete loan through Space Works. A member asks to borrow a tool, a staff
+member reviews the request, hands the tool over with evidence, and later takes it back. Along the way
+you will see exactly how the stock numbers move and where every action is recorded.
+
+The running example:
+
+| Who or what | In this tutorial |
+| --- | --- |
+| Makerspace | **Kochi Makers Lab**, slug `kochi-makers`, at `https://makers.example.org` |
+| Staff member | **Asha**, who holds the **Inventory Manager** role |
+| Member | **Ravi**, who wants to borrow something |
+| Product | **Arduino Uno**, 5 in stock |
+
+## What you'll build
+
+One finished loan: Ravi's request for 1 Arduino Uno goes from **pending review** to **accepted**,
+**issued** and finally **returned**, with a box scan, an issue photo, a return photo and a return
+remark attached. You will also try the two faster routes, QR self-checkout and direct handout.
+
+## What you need
+
+- A running Space Works with the makerspace from [Tutorial: your first makerspace](/tutorials/first-makerspace/):
+  Kochi Makers Lab, the **Arduino Uno** product (total quantity 5, marked **Public**) and Asha's staff
+  account with the Inventory Manager role.
+- At least one **box** with a QR label stuck on it. Every reviewed loan goes out in a box. See
+  [Boxes and containers](/guides/inventory-and-qr/#boxes-and-containers) if you do not have one yet.
+- Working email, so Ravi can verify his new account. See [Email](/configure/email/).
+- A phone or laptop with a camera, or any JPEG, PNG or WebP photo to use as evidence.
+
+## Time
+
+About 20 minutes.
+
+## The idea in one picture
+
+```
+Ravi asks ──► Asha accepts ──► Asha issues ──► Ravi uses it ──► Asha takes it back
+ pending        accepted          issued                           returned
+              (stock reserved)  (box scan +                     (box scan + return
+                                 issue photo)                    photo + remark)
+```
+
+Space Works keeps several counters for every product. These are the ones that move in this tutorial:
+
+| Counter | Meaning |
+| --- | --- |
+| **Total** | How many you own |
+| **Available** | On the shelf and free to lend |
+| **Reserved** | Promised to an accepted request, but not handed over yet |
+| **Issued** | Out with a borrower right now |
+
+You never edit **Available** by hand during a loan. The loan workflow moves units between these
+counters for you, so the numbers always add up.
+
+<Aside type="note" title="Reserved has no column of its own">
+The staff inventory table shows **Total**, **Available**, **Issued**, **Damaged** and **Lost**.
+Reserved units are the ones missing from that row: Total minus Available, Issued, Damaged and Lost.
+</Aside>
+
+## Before you start: note the starting numbers
+
+<Steps>
+
+1. Sign in to the staff console at `https://makers.example.org/admin/` as Asha.
+
+2. Open **Inventory → Inventory** and find **Arduino Uno**.
+
+   **You should see:** **Total** 5, **Available** 5, **Issued** 0.
+
+3. In another browser (or a private window), open the public catalogue at
+   `https://makers.example.org/m/kochi-makers`.
+
+   **You should see:** the Arduino Uno card with an **Available** badge. If Asha set the product's
+   **Public visibility** to **Exact count** and turned on **Show count**, the badge reads
+   **Available (5)** instead.
+
+</Steps>
+
+## Part 1: Ravi creates an account and asks to borrow
+
+<Steps>
+
+1. In the private window, open `https://makers.example.org/m/kochi-makers/member`.
+
+   **You should see:** a **Member sign in** form.
+
+2. Choose **Create a member account**. Fill in **Name** (`Ravi`), **Email** (`ravi@example.org`) and
+   **Password**. **Phone** is optional. Choose **Create account**.
+
+   **You should see:** "Check your email to verify the new account, then sign in."
+
+3. Sign in with the same email and password. Space Works asks for the code it emailed to Ravi.
+   Type it into **Verification code** and choose **Verify email**.
+
+   Until the email is verified, the account can do nothing except verify itself. This is how
+   Space Works knows the requester's contact details are real.
+
+4. Go back to the catalogue at `https://makers.example.org/m/kochi-makers`.
+
+5. On the **Arduino Uno** card, press **+** once. The counter between **-** and **+** shows `1`.
+
+   **You should see:** a **Borrow request** panel listing **Arduino Uno x1** under
+   **Selected equipment**.
+
+6. Under **Request purpose**, write why Ravi needs it, for example
+   `Building a soil moisture sensor for the community garden`.
+
+7. Choose **Submit request**.
+
+   **You should see:** **Request submitted** in a green box.
+
+</Steps>
+
+**Stock after this step:** nothing changes yet. A request is only a question; no unit is set aside
+until staff accept it.
+
+| Total | Available | Reserved | Issued |
+| --- | --- | --- | --- |
+| 5 | 5 | 0 | 0 |
+
+**Audit log:** a `request.submitted` entry, made by Ravi.
+
+<Aside type="note" title="Who can submit a request?">
+This tutorial assumes the default setup, where the **Membership** module is off and anyone who is
+signed in can ask to borrow. If your makerspace installed the Membership module, Ravi must also be an
+active member who has accepted the waiver and is checked in. See
+[Loans](/guides/loans/#1-a-member-submits-a-request).
+</Aside>
+
+## Part 2: Asha reviews and accepts
+
+<Steps>
+
+1. In Asha's staff console, open **Operate → Requests**.
+
+   **You should see:** Ravi's request in the **Pending review** panel, with his purpose text.
+
+2. Choose **Accept** on that request.
+
+   **You should see:** a dialog titled **Accept request #7** (your number will differ), with the line
+   **Arduino Uno (requested 1)** and a quantity box set to `1`.
+
+   You could lower the quantity to accept only part of a request, or set it to `0` to decline one
+   item. At least one unit must be accepted; otherwise use **Reject**, which asks for a reason.
+
+3. Leave the quantity at `1` and choose **Accept**.
+
+   **You should see:** the request move from **Pending review** to **Ready for handover**.
+
+4. Open **Inventory → Inventory** again and look at the Arduino Uno row.
+
+   **You should see:** **Total** 5, **Available** 4, **Issued** 0.
+
+</Steps>
+
+**Stock after this step:** accepting **reserves** the unit. It is still on the shelf, but nobody else
+can be promised it.
+
+| Total | Available | Reserved | Issued |
+| --- | --- | --- | --- |
+| 5 | 4 | 1 | 0 |
+
+On the public catalogue the badge still reads **Available**, or **Available (4)** with exact counts on.
+The status label only drops to **Limited** when 20% or less of the total is available (here, 1 unit or
+fewer).
+
+**Audit log:** a `request.accepted` entry, made by Asha, which records the accepted quantity.
+
+## Part 3: Asha issues the Arduino
+
+Issuing is the physical handover, and it is where Space Works insists on evidence. Two things are
+required, and the request cannot be issued without both:
+
+- **A box QR scan.** The Arduino goes out in a box, and Asha scans the QR label on that box. This ties
+  the loan to one physical container, so the scan history shows where it went, and on return the
+  same box must be scanned again. The box is a shared, checkable fact: "this kit left in box B-12".
+- **An issue photo.** Asha photographs what she is handing over. If the Arduino later comes back
+  with a bent header pin, the issue photo shows what condition it left in. Photos go to private
+  storage and are only ever shown to staff through short-lived links; they never appear on the public
+  site.
+
+Together with the audit log, these turn "I think Ravi had it" into evidence anyone on the team can
+check later.
+
+<Steps>
+
+1. In **Operate → Requests**, find Ravi's request under **Ready for handover** and choose
+   **Guided issue**.
+
+   **You should see:** a dialog titled **Issue request #7** with "Step 1 of 5: Scan container".
+
+2. Choose **Scan box QR** and point the camera at the box's QR label. If you have no camera, type the
+   label's payload into **Box QR payload** and choose **Check box QR**.
+
+   **You should see:** "Verified box:" followed by the box's code. Choose **Next**.
+
+3. **Check borrower card.** The dialog shows **Borrower: Ravi**. Check Ravi's identity in person,
+   tick **I checked the borrower against this request** and choose **Next**.
+
+4. **Check items.** The dialog shows **Arduino Uno** with **Accepted quantity: 1**. Make sure the
+   board in your hand matches, then choose **Next**.
+
+5. **Photo and confirmation.** Use the file picker (or **Camera**) to add a photo of the Arduino.
+
+   **You should see:** **Photo uploaded**, then "Uploaded photo #" and a number.
+
+   Optionally add an **Issue remark**, such as `Board with USB cable`.
+
+6. Choose **Confirm issue**.
+
+   **You should see:** **Issue recorded**, with the request number, the evidence photo number, the box
+   code and the line **Arduino Uno: 1 issued**. You can **Print receipt** for Ravi, then
+   **Close receipt**.
+
+7. Back in **Operate → Requests**, the request is now under **Active loans** with a due date, for
+   example "Due" followed by a date 7 days from now (the default loan period).
+
+8. Check **Inventory → Inventory** once more.
+
+   **You should see:** **Total** 5, **Available** 4, **Issued** 1.
+
+</Steps>
+
+**Stock after this step:** the reserved unit becomes an issued unit.
+
+| Total | Available | Reserved | Issued |
+| --- | --- | --- | --- |
+| 5 | 4 | 0 | 1 |
+
+**Audit log:** `box.assigned` and `box.scanned` for the box, `evidence.attached` for the photo, and
+`request.issued`, all made by Asha.
+
+<Aside type="tip" title="If issuing is refused">
+"Box is already out on another loan." means that box is still attached to an unreturned loan; use a
+different box. "Issue evidence has not been uploaded." means the photo did not finish uploading; add
+it again and wait for **Photo uploaded**.
+</Aside>
+
+## Part 4: Ravi uses the Arduino
+
+Nothing happens in Space Works while Ravi builds his sensor. The loan simply sits in **Active loans**
+until its due date. If your makerspace sends email and has a loan policy saved, Ravi gets a reminder
+around the due time. Staff can change the date with **Set due** on the request.
+
+## Part 5: Asha processes the return
+
+A return also needs evidence: the **same box scanned again**, a **return photo** and a **return
+remark**. The remark is required because it is where staff write down the condition, which matters
+most when something comes back damaged.
+
+<Steps>
+
+1. When Ravi brings the box back, open **Operate → Requests**, find his loan under **Active loans**
+   and choose **Guided return**.
+
+   **You should see:** **Return request #7**, "Step 1 of 5: Scan container".
+
+2. Scan the box's QR label (or type its payload and choose **Check box QR**), then **Next**.
+
+   It must be the box the Arduino went out in. A different box is refused with "Scanned box does not
+   match this loan."
+
+3. Tick **I checked the borrower against this request** and choose **Next**.
+
+4. **Check items.** The Arduino Uno shows **Remaining: 1**, with fields for **Returned**, **Damaged**
+   and **Missing**. **Returned** is already `1`. If the board is fine, leave it and choose **Next**.
+
+5. Add a return photo of the Arduino. To compare it with how the board left, use
+   **View issue photo** on the request in **Active loans** (before or after this dialog).
+
+6. In **Return remark (required)**, write what you found, for example
+   `Returned in good condition, cable included`.
+
+7. Choose **Confirm return**.
+
+   **You should see:** **Return recorded** and the line **Arduino Uno: 1 returned, 0 damaged,
+   0 missing**.
+
+8. Check **Inventory → Inventory**.
+
+   **You should see:** **Total** 5, **Available** 5, **Issued** 0. On the public catalogue the badge
+   reads **Available**, or **Available (5)** with exact counts on.
+
+</Steps>
+
+**Stock after this step:** the unit is back on the shelf.
+
+| Total | Available | Reserved | Issued |
+| --- | --- | --- | --- |
+| 5 | 5 | 0 | 0 |
+
+**Audit log:** `request.returned`, `evidence.attached` for the return photo and `box.scanned`, all
+made by Asha. The finished loan moves to the request **History** (choose **Show history** to see it).
+
+If Asha had recorded the board as **Damaged** instead, it would go to the **Damaged** count rather
+than back to **Available**, the request would end as **closed with issue**, and an accountability
+record would be written against Ravi. See
+[Damage, loss and accountability](/guides/loans/#damage-loss-and-accountability).
+
+## See the whole story in the audit log
+
+<Steps>
+
+1. Open **Insights → Audit log**. Inventory Managers can see it because the role includes
+   `view_audit`.
+
+2. Leave the filters empty to see every event, newest first. To narrow it down, type one complete
+   action code into the **Action** filter, for example `request.accepted`. The filter matches the
+   whole code exactly, so a partial code such as `request.` finds nothing.
+
+   **You should see:** each entry with a readable name (for example **Request accepted**) next to its
+   action code (`request.accepted`), who did it and when.
+
+3. For a single loan, go back to **Operate → Requests** and choose **View timeline** on the request.
+   It shows that request's events in order.
+
+</Steps>
+
+The whole loan, in order:
+
+| Stage | Action codes | Recorded for |
+| --- | --- | --- |
+| Request | `request.submitted` | Ravi |
+| Accept | `request.accepted` | Asha |
+| Issue | `box.assigned`, `box.scanned`, `evidence.attached`, `request.issued` | Asha |
+| Return | `request.returned`, `evidence.attached`, `box.scanned` | Asha |
+
+Audit entries are append-only. They cannot be edited or deleted, even by a superadmin, which is what
+makes them trustworthy months later.
+
+## The same loan, two faster ways
+
+The reviewed request is the safest route because a person approves every loan first. Space Works has
+two quicker routes for tools you trust people with. Both skip the review, so units go straight from
+**Available** to **Issued** with no reserved step, and both still require a photo.
+
+<Tabs>
+<TabItem label="QR self-checkout">
+
+Ravi borrows the Arduino himself, with no staff at the counter. This needs the **Self checkout**
+feature, the Arduino marked **Enabled for public self-checkout** with its own QR label, and Ravi must
+be an active member who is checked in at the space.
+
+1. Ravi opens `https://makers.example.org/m/kochi-makers/checkout` and stays on
+   **Use (check out)**.
+2. He uploads a photo of the Arduino.
+3. He chooses **Scan QR** and scans the label on the Arduino.
+
+Stock goes from 5 available to 4 available and 1 issued at once. The loan appears in Asha's
+**Active loans** like any other, and the audit log shows `public_tool.checked_out`.
+
+To return it, Ravi opens the same page, chooses **Return**, uploads a return photo, fills in
+**Return condition notes** and scans the QR again. The audit log shows `public_tool.returned`.
+
+</TabItem>
+<TabItem label="Direct handout">
+
+Asha lends the Arduino on the spot, with no request from Ravi. This needs the **Self checkout**
+feature and the `issue_direct_loan` action, which Inventory Managers have.
+
+:::caution[Ravi needs a membership and a check-in first]
+A direct handout only goes to an active member who is at the space right now. Ravi must have an
+active membership at Kochi Makers Lab, have accepted any waiver the space requires, and be checked in.
+The setup in these tutorials gives Ravi an account but no membership, so he won't appear in the
+**Borrower** list until you add one. See [Membership](/guides/membership/) and
+[Kiosk](/guides/kiosk/) for adding members and checking them in.
+:::
+
+1. Asha opens **Operate → Direct handout** and chooses **Guided handout**.
+2. **Borrower card:** she picks Ravi under **Borrower** (or scans his member card). The list shows
+   active members.
+3. **Scan or select tools:** she scans the Arduino's QR, or types `1` next to **Arduino Uno**.
+4. **Issue photo:** she adds a photo and an optional **Issue remark**, then chooses
+   **Confirm handout**.
+
+Stock goes from 5 available to 4 available and 1 issued. The audit log shows
+`admin_direct.checked_out`. The return is processed from the same tab, again with a return photo
+and remark, and is logged as `admin_direct.returned`.
+
+</TabItem>
+</Tabs>
+
+For the full rules behind each route, see [QR self-checkout](/guides/loans/#qr-self-checkout) and
+[Direct handouts](/guides/loans/#direct-handouts).
+
+## If something went wrong
+
+- **Ravi's request fails with an authentication error.** He is not signed in, or his email is not
+  verified yet. Sign in again from `/m/kochi-makers/member` and finish verification first.
+- **There is no Guided issue button.** Asha's role needs `issue_request`, `assign_box` and
+  `upload_evidence`. See [Roles and permissions](/guides/roles-and-permissions/).
+- **The photo upload fails.** Object storage is not reachable from the browser. See
+  [Object storage](/configure/object-storage/).
+- **Direct handout or self-checkout is missing.** The **Self checkout** feature is off for the
+  makerspace. See [Modules](/guides/modules/).
+
+For anything else, see [Troubleshooting](/help/troubleshooting/).
+
+## Next
+
+- [Tutorial: your first API call](/tutorials/first-api-call/): read the same catalogue from code.
+- [Loans](/guides/loans/): partial returns, renewals, borrow limits, deposits and late fees.
+- [Inventory and QR codes](/guides/inventory-and-qr/): boxes, labels and public visibility.
+- [Reports and audit](/guides/reports/): what else the audit log and reports can tell you.

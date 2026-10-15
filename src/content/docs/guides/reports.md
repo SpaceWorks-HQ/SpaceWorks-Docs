@@ -1,11 +1,11 @@
 ---
 title: Reports and audit
-description: Use SpaceWorks reports and charts, export CSV and XLSX, schedule report deliveries, read the outstanding-loans ledger and audit log, and request a full makerspace data export.
+description: Use Space Works reports and charts, export CSV and XLSX, schedule report deliveries, read the outstanding-loans ledger and audit log, and request a full makerspace data export.
 sidebar:
   order: 10
 ---
 
-SpaceWorks records everything that happens, so most questions ("what is out right now?", "who keeps
+Space Works records everything that happens, so most questions ("what is out right now?", "who keeps
 returning things damaged?", "how busy were the printers last month?") already have an answer. This
 guide shows where to find it.
 
@@ -86,7 +86,7 @@ repeat offenders with damage or loss records, and requesters who are currently r
 
 ## The audit log
 
-Every state-changing action in SpaceWorks writes an audit entry: who did it, what, to which record and
+Every state-changing action in Space Works writes an audit entry: who did it, what, to which record and
 when. The log is append-only; entries cannot be edited or deleted.
 
 **Insights → Audit log** lets you filter by action, actor, target, source and date range. Each loan

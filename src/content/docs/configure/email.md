@@ -1,11 +1,11 @@
 ---
 title: Email
-description: Set up SMTP for SpaceWorks at the deployment, platform and makerspace level, understand background delivery and the email module, send a test message, and keep mail out of spam folders.
+description: Set up SMTP for Space Works at the deployment, platform and makerspace level, understand background delivery and the email module, send a test message, and keep mail out of spam folders.
 sidebar:
   order: 3
 ---
 
-SpaceWorks sends two kinds of email:
+Space Works sends two kinds of email:
 
 - **Platform mail** belongs to the deployment rather than any makerspace: password reset codes and
   links, email verification and similar account messages.
@@ -65,7 +65,7 @@ variables instead.
 
 ## When email counts as "configured"
 
-The **Forgot password?** link appears on the sign-in screen only when SpaceWorks can really send
+The **Forgot password?** link appears on the sign-in screen only when Space Works can really send
 mail: `EMAIL_BACKEND` is the SMTP backend **and** either platform SMTP or `EMAIL_HOST` is set. If
 you skip email entirely, leave all of it unset so the link stays hidden rather than promising mail
 that never arrives.
@@ -129,7 +129,7 @@ to the error type so they never leak credentials.
   `List-Unsubscribe-Post` headers when the member preferences feature is on and
   `PUBLIC_APP_BASE_URL` uses HTTPS. Make sure your provider DKIM-signs those headers.
 - **Suppress bad addresses.** Under **Delivery logs**, staff can add an address that hard-bounced or
-  complained; SpaceWorks then stops all mail to it for that makerspace, including transactional mail.
+  complained; Space Works then stops all mail to it for that makerspace, including transactional mail.
   Superadmins have the same list for platform mail in `/control/`. Addresses are stored as keyed
   hashes, never in plain text.
 - **Automate bounces (optional).** A provider or relay you control can report hard bounces and

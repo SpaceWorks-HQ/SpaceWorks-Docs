@@ -5,7 +5,7 @@ sidebar:
   order: 5
 ---
 
-**Connected devices** are machines that talk to SpaceWorks on their own: a print agent next to a 3D printer that reports job progress and filament use, or a label printer that prints QR labels for new stock. A device is never a user account. It holds an **Ed25519 key** it generated itself, proves it owns that key once during enrollment, and then signs every request.
+**Connected devices** are machines that talk to Space Works on their own: a print agent next to a 3D printer that reports job progress and filament use, or a label printer that prints QR labels for new stock. A device is never a user account. It holds an **Ed25519 key** it generated itself, proves it owns that key once during enrollment, and then signs every request.
 
 This page is for people writing device agents. Staff-side setup is covered in [Printing](/guides/printing/) and [Inventory and QR codes](/guides/inventory-and-qr/). Kiosk tablets work differently (they are browsers with a PIN session) and are covered at the end.
 
@@ -206,12 +206,12 @@ class DeviceClient:
 Every authentication failure is `401` with `WWW-Authenticate: SpaceWorks-Device-v1`. A revoked or rotated key, a stale `key_version`, a timestamp outside the skew, a replayed nonce and a tampered body all fail the same way. `403` means the device is not allowed on that route or its makerspace is unavailable, and `423` means the makerspace is frozen for migration.
 
 :::note[Behind a proxy]
-The server verifies the raw request target it actually received (the `RAW_URI` / `REQUEST_URI` value, or ASGI `raw_path`). If a proxy in front of SpaceWorks rewrites paths or query strings, signatures will not match. A server that exposes no raw target refuses all device requests.
+The server verifies the raw request target it actually received (the `RAW_URI` / `REQUEST_URI` value, or ASGI `raw_path`). If a proxy in front of Space Works rewrites paths or query strings, signatures will not match. A server that exposes no raw target refuses all device requests.
 :::
 
 ## Heartbeat and offline alerts
 
-`POST /api/v1/device/heartbeat` with an empty body records that the device is alive and returns `{device_id, makerspace_id, status, key_version, last_seen_at}`. Any signed request also counts as activity. If a device stays silent longer than its `offline_threshold_seconds` (default 300), SpaceWorks raises a `devices.offline` notification, and `devices.recovered` when it comes back. Route those to email, chat or a [webhook](/api/webhooks/) in the notification matrix.
+`POST /api/v1/device/heartbeat` with an empty body records that the device is alive and returns `{device_id, makerspace_id, status, key_version, last_seen_at}`. Any signed request also counts as activity. If a device stays silent longer than its `offline_threshold_seconds` (default 300), Space Works raises a `devices.offline` notification, and `devices.recovered` when it comes back. Route those to email, chat or a [webhook](/api/webhooks/) in the notification matrix.
 
 ## Command delivery (lease and acknowledge)
 
@@ -269,7 +269,7 @@ POST /api/v1/device/printer-jobs/{printer_job_id}/result
 - `consumptions` is required, even as an empty list. Each entry names a consumable of the bound machine; count-based consumables need whole numbers.
 - Send `actual_grams` only when the request reserved a weight-based material pool, `actual_quantity` for other reserved pools, and neither when nothing was reserved. Never both.
 - For a failed print use `"outcome": "failed"` and add `failure_reason` (up to 1000 characters) and `percent_complete` (0 to 100).
-- Prices, amounts and payment fields are refused. Charges are calculated by SpaceWorks from the makerspace's own pricing.
+- Prices, amounts and payment fields are refused. Charges are calculated by Space Works from the makerspace's own pricing.
 - Keep `operation_id` the same across retries of one report. The same operation and payload returns the stored result; a changed payload under the same `operation_id` gets `409`.
 
 By default a report waits for staff review (`POST /api/v1/admin/printer-jobs/{id}/apply`). A binding with `auto_apply_terminal: true` applies it automatically.
@@ -325,7 +325,7 @@ Every cookie-bearing kiosk route requires an `X-Station-CSRF` header and an `Ori
 
 ## The Telegram webhook route
 
-Telegram in SpaceWorks is **outbound only**: it posts alerts into a group chat, and decisions such as accepting or rejecting a request are made in the staff console. `POST /api/v1/integrations/telegram/webhook` still exists so that a deployment which once registered it with Telegram does not leave Telegram retrying a dead URL. It checks the `X-Telegram-Bot-Api-Secret-Token` header against `TELEGRAM_WEBHOOK_SECRET` (refusing with `403` when the secret is unset or wrong), then acknowledges every update with `{"detail": "Ignored."}` and takes no action. Do not build on it.
+Telegram in Space Works is **outbound only**: it posts alerts into a group chat, and decisions such as accepting or rejecting a request are made in the staff console. `POST /api/v1/integrations/telegram/webhook` still exists so that a deployment which once registered it with Telegram does not leave Telegram retrying a dead URL. It checks the `X-Telegram-Bot-Api-Secret-Token` header against `TELEGRAM_WEBHOOK_SECRET` (refusing with `403` when the secret is unset or wrong), then acknowledges every update with `{"detail": "Ignored."}` and takes no action. Do not build on it.
 
 ## Related
 

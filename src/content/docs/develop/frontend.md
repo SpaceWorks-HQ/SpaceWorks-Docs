@@ -1,6 +1,6 @@
 ---
 title: Frontend
-description: The React, TanStack Query and Tailwind conventions in the SpaceWorks frontend, from routing and server state to generated API types, theming and accessibility.
+description: The React, TanStack Query and Tailwind conventions in the Space Works frontend, from routing and server state to generated API types, theming and accessibility.
 sidebar:
   order: 5
 ---

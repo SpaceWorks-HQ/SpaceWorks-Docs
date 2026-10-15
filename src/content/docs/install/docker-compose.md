@@ -1,11 +1,11 @@
 ---
 title: Docker Compose stack
-description: The services in a production SpaceWorks install, how the Compose files layer, and the commands to start, stop, inspect and tune it.
+description: The services in a production Space Works install, how the Compose files layer, and the commands to start, stop, inspect and tune it.
 sidebar:
   order: 4
 ---
 
-Every SpaceWorks install, including one made with the one-line installer, is a Docker Compose
+Every Space Works install, including one made with the one-line installer, is a Docker Compose
 project. This page explains what runs, how the configuration is put together, and how to operate it
 day to day.
 

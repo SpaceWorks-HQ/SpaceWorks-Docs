@@ -1,21 +1,21 @@
 ---
 title: Introduction
-description: What SpaceWorks is, who it is for, what it does, and what it deliberately does not do.
+description: What Space Works is, who it is for, what it does, and what it deliberately does not do.
 sidebar:
   order: 1
 ---
 
-SpaceWorks is a free, open-source, self-hosted platform for running a makerspace. It keeps track of
+Space Works is a free, open-source, self-hosted platform for running a makerspace. It keeps track of
 your tools and equipment, who has borrowed what, what is available right now, and how every loan,
 print job, event and booking moves from request to done. One installation can host many makerspaces,
 each fully isolated from the others.
 
-The design goal is **traceable handovers**. When a physical item changes hands, SpaceWorks records
+The design goal is **traceable handovers**. When a physical item changes hands, Space Works records
 evidence of it, so responsibility for shared gear never has to be guessed.
 
 ## Who it is for
 
-SpaceWorks suits any community that lends out physical things and needs to know where they went:
+Space Works suits any community that lends out physical things and needs to know where they went:
 
 - **Makerspaces and hackerspaces**: a tool wall, electronics kits, 3D printers and a front desk.
 - **Tool libraries**: a catalogue members can browse, borrow requests, returns and overdue tracking.
@@ -29,7 +29,7 @@ It also works for spaces that only run events or only take bookings. See
 
 ## Where it came from
 
-SpaceWorks started inside the **TinkerSpace Kochi** community, from a simple need: make it easy for a
+Space Works started inside the **TinkerSpace Kochi** community, from a simple need: make it easy for a
 makerspace to know what tools exist, who borrowed what, what is available, and how each loan and print
 job moves from request to done. It is built by makers for makers. You can run it at your space, fork it,
 or use it as the starting point for something that fits your community better.
@@ -128,7 +128,7 @@ using your own identity provider plus front-desk **walk-in** records. See
 
 ### Editions and modules
 
-- **Modules.** SpaceWorks ships 34 modules. Six core modules (the catalogue, request workflow, staff
+- **Modules.** Space Works ships 34 modules. Six core modules (the catalogue, request workflow, staff
   console, evidence uploads, QR management and the scanner) are always on. The rest are opt-in per
   makerspace, and switching one off hides it while keeping its data. See [Modules](/guides/modules/).
 - **Editions.** A deployment can be set up as a makerspace (the default), as an events-only or
@@ -138,7 +138,7 @@ using your own identity provider plus front-desk **walk-in** records. See
   for a space with one small server and nobody to look after a larger stack. See
   [Single box](/install/single-box/).
 
-## What SpaceWorks is not
+## What Space Works is not
 
 - **Not a chat bot.** Telegram, Slack, Mattermost and Discord receive alerts only. No chat message
   carries accept or reject buttons; decisions are made in the staff console.
@@ -151,7 +151,7 @@ using your own identity provider plus front-desk **walk-in** records. See
 
 ## License and cost
 
-SpaceWorks is free and open-source software under the
+Space Works is free and open-source software under the
 [GNU Affero General Public License v3.0 or later](https://github.com/SpaceWorks-HQ/SpaceWorks/blob/main/LICENSE)
 (`AGPL-3.0-or-later`). You may use, study, share and modify it for any purpose, commercial or not.
 Because the AGPL is a network copyleft licence, if you run a **modified** version and let people use it
@@ -187,5 +187,5 @@ the [API overview](/api/overview/).
 
 - [Quick start](/get-started/quick-start/): get a running install in a few minutes.
 - [Concepts](/get-started/concepts/): the mental model behind makerspaces, roles, requests and modules.
-- [Glossary](/get-started/glossary/): every SpaceWorks-specific term in one place.
+- [Glossary](/get-started/glossary/): every term specific to Space Works, in one place.
 - [Requirements](/install/requirements/): what your server needs.

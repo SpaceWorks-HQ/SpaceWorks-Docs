@@ -5,7 +5,7 @@ sidebar:
   order: 7
 ---
 
-SpaceWorks has two separate modules for time-based activities:
+Space Works has two separate modules for time-based activities:
 
 - **Events** (`events` module): workshops, talks and open days that people register for and check in
   to. Staff need `manage_events`.

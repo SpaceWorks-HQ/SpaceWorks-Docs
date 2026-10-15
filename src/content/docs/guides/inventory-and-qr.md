@@ -5,7 +5,7 @@ sidebar:
   order: 4
 ---
 
-Your inventory is the catalogue of things people can borrow, and QR codes are how SpaceWorks proves
+Your inventory is the catalogue of things people can borrow, and QR codes are how Space Works proves
 which physical box or tool changed hands. This guide covers setting both up. Handing things out is in
 [Loans](/guides/loans/).
 
@@ -46,7 +46,7 @@ catalogue.
 5. Set the public visibility options (see [below](#public-visibility)) and any **Public borrowing
    terms** text you want shown on the item page.
 6. Optionally set a **Reorder point** and **Reorder quantity**. A reorder point of 0 turns low-stock
-   alerts off; a reorder quantity lets SpaceWorks draft a procurement entry.
+   alerts off; a reorder quantity lets Space Works draft a procurement entry.
 7. Save. The item opens for editing so you can upload a photo.
 
 Each product page also shows its lending history, QR history and, for individual tracking, its asset
@@ -54,7 +54,7 @@ units.
 
 ### Quantities and the to-be-fixed shelf
 
-SpaceWorks keeps available, reserved, issued, damaged, lost and to-be-fixed counts for you. You do not
+Space Works keeps available, reserved, issued, damaged, lost and to-be-fixed counts for you. You do not
 edit "available" by hand: it changes when requests are accepted, issued and returned.
 
 When you need to correct stock, use **Adjust quantities** with a reason. To take broken units out of
@@ -166,7 +166,7 @@ the items you trust people to take without staff. See [Loans](/guides/loans/#qr-
 With the `bulk_import` module installed, **Inventory → Bulk import** loads many items at once:
 
 1. Upload a CSV or XLSX file, or paste a table.
-2. Map your columns to SpaceWorks fields (or mark a column **Do not import**).
+2. Map your columns to Space Works fields (or mark a column **Do not import**).
 3. Preview. The preview lists rows to create or update, with errors and warnings.
 4. Apply.
 

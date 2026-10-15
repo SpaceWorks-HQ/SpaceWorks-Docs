@@ -1,11 +1,11 @@
 ---
 title: Architecture
-description: How SpaceWorks is put together, from the deep backend modules to live updates, background jobs and evidence storage.
+description: How Space Works is put together, from the deep backend modules to live updates, background jobs and evidence storage.
 sidebar:
   order: 1
 ---
 
-SpaceWorks is a multi-tenant system for running makerspaces: lending hardware, machine and print
+Space Works is a multi-tenant system for running makerspaces: lending hardware, machine and print
 queues, bookings, events, membership and the reporting around them. Its central design concern is
 **traceability of physical handovers**. Every issue and return of hardware produces evidence (QR
 scans, photos, remarks) and an append-only audit trail.

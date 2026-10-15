@@ -1,11 +1,11 @@
 ---
 title: Glossary
-description: Alphabetical definitions of the terms SpaceWorks uses in its interface, configuration and documentation.
+description: Alphabetical definitions of the terms Space Works uses in its interface, configuration and documentation.
 sidebar:
   order: 4
 ---
 
-Short definitions of the terms that have a specific meaning in SpaceWorks. For how they fit together,
+Short definitions of the terms that have a specific meaning in Space Works. For how they fit together,
 read [Concepts](/get-started/concepts/).
 
 ## A
@@ -20,7 +20,7 @@ read [Concepts](/get-started/concepts/).
 **Action**: One permission from a fixed list, such as `accept_request`, `issue_request`, `edit_inventory` or
   `view_audit`. [Roles](#r) are bundles of actions. See [Roles and permissions](/guides/roles-and-permissions/).
 
-**API client**: A registered integration that calls the SpaceWorks API with its own credentials and scopes. See
+**API client**: A registered integration that calls the Space Works API with its own credentials and scopes. See
   [API clients](/api/api-clients/).
 
 **Area**: A bundle of related modules and features that the installer asks about with one yes/no question.
@@ -62,7 +62,7 @@ read [Concepts](/get-started/concepts/).
 
 ## D
 
-**Deployment**: One installation of SpaceWorks, which can host many [makerspaces](#m).
+**Deployment**: One installation of Space Works, which can host many [makerspaces](#m).
 
 **Direct handout**: Staff handing an item to someone with no prior reviewed request. It still needs uploaded evidence
   and an eligible scanned tool, and is recorded like any other loan.
@@ -116,7 +116,7 @@ read [Concepts](/get-started/concepts/).
 **Member accounts**: The module that lets people sign themselves up and sign in as members (password, Google, Apple or
   phone). Staff sign-in never depends on it.
 
-**Module**: A part of SpaceWorks that each makerspace can install or uninstall, such as `events`, `bookings`,
+**Module**: A part of Space Works that each makerspace can install or uninstall, such as `events`, `bookings`,
   `machines` or `reports`. There are 34. Uninstalling hides a module and keeps its data. See
   [Modules](/guides/modules/).
 

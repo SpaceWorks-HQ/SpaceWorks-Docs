@@ -1,6 +1,6 @@
-# SpaceWorks-Docs
+# Space Works Docs
 
-The documentation site for [SpaceWorks](https://github.com/SpaceWorks-HQ/SpaceWorks), the open-source
+The documentation site for [Space Works](https://github.com/SpaceWorks-HQ/SpaceWorks), the open-source
 makerspace manager: install and setup, configuration, guides for makerspace staff, the developer guide,
 the API, and the FAQ.
 
@@ -53,7 +53,7 @@ sidebar:
 
 ## Writing rules
 
-- Check facts against the SpaceWorks source (settings, scripts, compose files), not only its older
+- Check facts against the Space Works source (settings, scripts, compose files), not only its older
   Markdown docs.
 - Link between pages with absolute paths and a trailing slash: `[Updates](/install/updates/)`.
 - Use placeholders (`example.org`, `change-me`) — never real keys or personal data.
@@ -72,4 +72,4 @@ The output in `dist/` is plain static files, so Netlify, Cloudflare Pages or any
 
 ## License
 
-AGPL-3.0-or-later, the same as SpaceWorks.
+AGPL-3.0-or-later, the same as Space Works.

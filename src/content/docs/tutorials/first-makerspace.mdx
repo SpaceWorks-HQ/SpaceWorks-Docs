@@ -1,0 +1,323 @@
+---
+title: "Tutorial: set up your first makerspace"
+description: Turn the makerspace the installer created into Kochi Makers Lab, invite a staff member, add an Arduino Uno with a QR label and see it on the public catalogue.
+sidebar:
+  order: 2
+---
+
+import { Steps, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+In [the first tutorial](/tutorials/first-install/) you installed Space Works and the installer created
+a makerspace for you. Now you'll make it yours: give it its full name and public details, invite a
+staff member, add your first item, print its QR label and check what the public sees.
+
+Everything here happens in the browser, in the **staff console** at `/admin`. You only need the
+terminal for one optional step.
+
+| Thing | In this tutorial |
+| --- | --- |
+| Makerspace | **Kochi Makers Lab**, slug `kochi-makers` |
+| Website | `https://makers.example.org` |
+| Staff member | **Asha**, `asha@example.org`, who will be an **Inventory Manager** |
+| First item | **Arduino Uno**, 5 in stock, in the **Electronics** category |
+
+## What you'll build
+
+- A makerspace called **Kochi Makers Lab** with its location, hours and currency filled in.
+- Asha's staff account, able to run the inventory but not the makerspace's settings.
+- An **Electronics** category holding an **Arduino Uno** product with 5 units.
+- A printable QR label for the Arduino Uno.
+- A public catalogue at `https://makers.example.org/m/kochi-makers` showing the Arduino Uno as
+  **Available**, without revealing exactly how many you have.
+
+## What you need
+
+- A finished [first install](/tutorials/first-install/), and the superadmin username and password it
+  gave you.
+- Asha's email address, and a way to send her a link (email, chat or a message).
+- A printer, if you want to stick the QR label on something today.
+
+## Time
+
+About 30 minutes.
+
+## Words you'll meet
+
+| Word | Meaning |
+| --- | --- |
+| **Staff console** | The admin side of Space Works at `/admin`, where staff run the makerspace. The public sees the catalogue instead. |
+| **Slug** | The short web-safe name in an address. `kochi-makers` is the slug in `/m/kochi-makers`. It is fixed when the makerspace is created. |
+| **Superadmin** | You: the account that runs the whole server and can change everything, in every makerspace. |
+| **Role** | A named set of permissions inside one makerspace, such as Inventory Manager. |
+| **Module** | A whole feature area, such as events or machines, that can be switched on or off. |
+| **Product** | One kind of thing you lend, like "Arduino Uno", with a stock count. |
+| **QR label** | A printed square code. Scanning it tells Space Works exactly which item or box is in your hand. |
+
+## Part 1: name and public details
+
+<Steps>
+
+1. **Sign in.** Open `https://makers.example.org/admin` and sign in as `admin` (with your
+   authenticator code if you set one up). If the console asks you to choose a makerspace, pick
+   **Kochi Makers**.
+
+   **You should see** the **Dashboard**, with a setup checklist listing items such as
+   **Set the profile and location**, **Add your first item** and **Invite staff**. Each one ticks
+   itself off when you've done the work, so watch it fill up as you go.
+
+2. **Give it its full name.** Open **Admin → Settings**. The page is titled **Makerspace settings**
+   and is one long page of sections. In the first section, **Branding**:
+
+   - Change **Registered name** from `Kochi Makers` to `Kochi Makers Lab`.
+   - Choose **Save registered name**.
+
+   The slug stays `kochi-makers`, so your public address doesn't change. That's why the first
+   tutorial typed the shorter name into the installer.
+
+   **Public display name** is optional. Fill it in only if you want visitors to see something
+   different from the registered name; leave it blank to use the registered name.
+
+3. **Add a logo and cover (optional).** Still in **Branding**, upload a **Logo** and a
+   **Cover image (wide banner)**. Without a logo, the public site shows the name as text, which is
+   fine to start with.
+
+4. **Set the location.** Scroll to the **Location** section:
+
+   - **Location label:** `Kochi, Kerala`
+   - **Google Maps link:** optional. In Google Maps, use Share → Copy link and paste it here.
+
+   Choose **Save location**. This label is shown on your public pages.
+
+5. **Set hours and currency.** Scroll to **Location & hours**:
+
+   - **Timezone:** check it says `Asia/Kolkata` (you chose it in the installer).
+   - **Country:** India. Country is only visible to staff.
+   - **Default currency:** check it says `inr`.
+   - Fill in the weekly opening hours.
+
+   Choose **Save location & hours**.
+
+   **You should see** `Saved.` under the form.
+
+</Steps>
+
+## Part 2: check what's public and what's switched on
+
+<Steps>
+
+1. **Check the public switches.** In the **General** section of the same Settings page:
+
+   - **Show public inventory** should be ticked (its badge says **On**). This is the catalogue
+     visitors browse.
+   - **Publish public site** should be ticked. It controls whether the makerspace appears in the
+     public directory at all.
+   - **Public home** can stay on **Automatic**. With lending switched on, `/m/kochi-makers` opens on
+     the catalogue.
+
+   Both switches are on for a new makerspace. Turning either off hides things but deletes nothing.
+
+2. **Review the modules.** Open **Admin → Modules**. Modules are grouped by area. Each group shows a
+   badge such as "3 of 5 installed", or **Always on** for the parts every makerspace has.
+
+   Open a group to see each module, what it does and an **Install** or **Uninstall** button.
+   The areas you chose in the installer (Inventory & lending, Machines and Reports) are already
+   installed, so you don't need to change anything for this tutorial. Uninstalling a module later
+   hides its screens and keeps its data.
+
+   Only a superadmin sees this page. The installer's area menu is also available from the server:
+
+   ```bash title="On the server, in /opt/spaceworks"
+   bash scripts/update.sh --modules-only
+   ```
+
+   [Modules](/guides/modules/) explains each one.
+
+</Steps>
+
+<Aside type="tip">
+Smaller switches inside a module, such as loan renewals or kiosk stations, live in the
+**Feature settings** section of **Admin → Settings**.
+</Aside>
+
+## Part 3: invite Asha as Inventory Manager
+
+An **Inventory Manager** can run the whole lending side: add and edit inventory, print QR labels,
+review borrow requests, hand items out and take them back. They can't change the makerspace's
+settings, staff or money. That suits Asha, who looks after the lab's tools.
+
+<Steps>
+
+1. **Create the invitation.** Open **Admin → Users** and scroll to **Staff invitations**:
+
+   - **Email:** `asha@example.org`
+   - **Role:** Inventory Manager
+
+   Choose **Invite staff**.
+
+   **You should see** a delivery status, the words `You can also share this link privately:` and a
+   box holding the invitation link. The invitation also appears in the list below with its expiry
+   date. Invitations last 7 days.
+
+2. **Get the link to Asha.** If you've set up [email](/configure/email/), Asha receives the link by
+   email. If not (a brand-new install has no email yet), click into the **Invitation link** box, copy
+   the link and send it to Asha yourself. Treat it like a password: anyone with the link can accept
+   it before Asha does.
+
+   Lost it? Use **Resend** beside the invitation to get a fresh link, or **Revoke** to cancel it.
+
+3. **Asha accepts.** Asha opens the link. It goes to `https://makers.example.org/staff-invitations/accept`.
+
+   **She should see** the heading **Accept your staff invitation**. She chooses a strong
+   **Password** for her new account and selects **Accept invitation**.
+
+4. **Asha signs in.** Asha goes to `https://makers.example.org/admin` and signs in with her **email
+   address** as the username, plus the password she just chose.
+
+   **She should see** the console with the **Inventory** menu group, including **Inventory**,
+   **Categories** and **QR Tools**, but no **Settings** or **Users**.
+
+</Steps>
+
+<Aside type="note">
+Prefer to hand out a username and password yourself, for example for a shared front-desk login? Use
+**Add staff** on the same Users page instead. See
+[Roles and permissions](/guides/roles-and-permissions/) for every role and how to build narrower ones.
+</Aside>
+
+## Part 4: add a category and your first item
+
+You can do this part as yourself or as Asha.
+
+<Steps>
+
+1. **Add the Electronics category.** Open **Inventory → Categories**. In the form at the top:
+
+   - **Name:** `Electronics`
+   - **Slug:** leave empty. Its placeholder says "auto from name", so it becomes `electronics`.
+   - **Order** and **Icon:** optional.
+
+   Choose **Add category**.
+
+   **You should see** a row for **Electronics** in the table, with `0` in the **# products** column.
+
+2. **Add the Arduino Uno.** Open **Inventory → Inventory** and choose **Add item**. Fill in:
+
+   | Field | Value | Why |
+   | --- | --- | --- |
+   | **Name** | `Arduino Uno` | What people search for. |
+   | **Tracking mode** | Quantity | You count how many you have, rather than tracking each board separately. |
+   | **Category** | Electronics | Groups it on the public catalogue. |
+   | **Description** | `Microcontroller board with USB cable.` | Shown to borrowers. |
+   | **Public borrowing terms** | `Return with the USB cable.` | Optional rules shown on the item's public page. |
+   | **Storage location** | `Shelf B3` | Staff only. Never shown to the public. |
+   | **Total quantity** | `5` | How many you own. |
+   | **Available quantity** | `5` | How many are on the shelf right now. Both start at `1`, so change both. |
+   | **Public** | Ticked | Lists the item on the public catalogue. |
+   | **Self checkout** | Unticked | Keep loans staff-reviewed for now. |
+   | **Show count** | Unticked | Don't show the exact number publicly. |
+   | **Public visibility** | Status only | Show a simple label instead of a number. |
+
+   The other product details (manufacturer, model, barcode and so on) are optional. Choose **Save**.
+
+   **You should see** the item open again for editing, so you can upload a photo, and an
+   **Arduino Uno** row in the inventory list with a total of 5 and 5 available. Back in
+   **Categories**, Electronics now shows `1` product.
+
+</Steps>
+
+### What "Status only" shows the public
+
+You picked **Status only**, so visitors see a word instead of a number:
+
+| Label | When |
+| --- | --- |
+| **Available** | More than 20% of the total is on the shelf |
+| **Limited** | 20% of the total or less is available (rounded up, so 1 of 5) |
+| **Unavailable** | Nothing is available |
+
+With 5 of 5 on the shelf, the Arduino Uno shows **Available**. When only one is left it switches
+to **Limited**, all by itself. To show the exact number instead, choose **Exact count** and also
+tick **Show count**; the number appears only when both are set. More in
+[Inventory and QR codes](/guides/inventory-and-qr/).
+
+## Part 5: print a QR label
+
+A QR label lets staff scan the item instead of searching for it, and every scan is recorded.
+
+<Steps>
+
+1. **Start a print batch.** Open **Inventory → QR Tools** and choose **New batch**. In
+   **Create QR print batch**, set **Batch title** to `Electronics shelf` and choose **Create batch**.
+
+   The new batch is selected for you in **Print batch**.
+
+2. **Add the Arduino Uno's label.** Under **Inventory QR**, choose the **Inventory item**.
+
+   **You should see** the option `Arduino Uno | quantity | 5 available`.
+
+   Because the Arduino Uno is tracked by quantity, it gets one label for the product. Choose
+   **Add/reprint item QR**.
+
+   **You should see** the label appear in the batch, and the batch says `1 QR labels accumulated`.
+
+3. **Download and print.** Choose **Download all (ZIP)**. The ZIP file contains one SVG image per
+   label. Open the image in your browser or any image viewer, print it, and stick it on the Arduino
+   Uno storage bin.
+
+</Steps>
+
+<Aside type="note">
+Want a separate label on every board, so you know exactly which one went out? Use **Individual**
+tracking instead of Quantity. QR Tools then generates one label per unit. Separately, staff hand every
+reviewed loan over in a labelled **box**. Both are covered in
+[Inventory and QR codes](/guides/inventory-and-qr/).
+</Aside>
+
+## Part 6: see it as the public does
+
+<Steps>
+
+1. **Open a private window.** Use your browser's private or incognito mode, so you see the site as a
+   visitor who isn't signed in.
+
+2. **Go to the catalogue.** Open `https://makers.example.org/m/kochi-makers`.
+
+   You can also just open `https://makers.example.org`: while Kochi Makers Lab is the only public
+   makerspace on the server, the home page sends visitors straight to it.
+
+   **You should see** the name **Kochi Makers Lab**, a search box that says
+   "Search tools, machines, kits, or materials", an **Electronics** category, and **Arduino Uno**
+   marked **Available**.
+
+3. **Check what's hidden.** The public page doesn't show **Shelf B3**, the QR code or the exact
+   count. Storage locations, QR codes, box IDs and scan history are never shown publicly.
+
+</Steps>
+
+Your makerspace is ready for its first loan.
+
+## If something went wrong
+
+- **The Arduino Uno isn't on the public page.** Check that **Public** is ticked on the item, and that
+  **Show public inventory** and **Publish public site** are both ticked in **Admin → Settings**.
+  Archived items never appear.
+- **The public page says `No public programme is available.`** The public site is switched off, or
+  no public area (such as lending) is installed. Check **Publish public site** and
+  **Admin → Modules**.
+- **The page says `Unable to load this makerspace.`** Check the slug in the address. It's
+  `kochi-makers`, from the name you typed in the installer, not `kochi-makers-lab`.
+- **Asha's invitation email never arrived.** A new install has no email set up. Copy the invitation
+  link from **Staff invitations** and send it yourself, or set up [email](/configure/email/) and choose
+  **Resend**.
+- **There's no QR Tools menu item.** It needs the QR print batches module, part of the Inventory &
+  lending area, and the `manage_qr` permission. Check **Admin → Modules** and the person's role.
+
+More fixes are in [Troubleshooting](/help/troubleshooting/).
+
+## Next
+
+- [Tutorial: your first loan, start to finish](/tutorials/first-loan/): Asha lends the Arduino Uno to
+  a member.
+- [Set up your makerspace](/guides/makerspace-setup/): every setting, with a go-live checklist.
+- [Roles and permissions](/guides/roles-and-permissions/): build a front-desk role for volunteers.
+- [Inventory and QR codes](/guides/inventory-and-qr/): bulk import, boxes and stocktakes.

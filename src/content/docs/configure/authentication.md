@@ -5,7 +5,7 @@ sidebar:
   order: 2
 ---
 
-SpaceWorks offers four kinds of sign-in: **password**, **identity provider** (Google, Apple, or your
+Space Works offers four kinds of sign-in: **password**, **identity provider** (Google, Apple, or your
 own OpenID Connect server such as Keycloak or Authentik), **SMS code**, and **self sign-up** for new
 members. This page explains how to set each one up, which decisions are deployment-wide and which
 are per makerspace, and how sessions and two-step verification work.
@@ -42,7 +42,7 @@ method appear, and turning one off never deletes stored credentials.
   provider. Signing in to, or linking a provider to, an existing account keeps working.
 
 Existing sessions are not ended when you switch a method off; use the restrict or suspend flow to
-end someone's access. SpaceWorks refuses two changes because they cannot be undone from inside the
+end someone's access. Space Works refuses two changes because they cannot be undone from inside the
 app: switching off a method that is somebody's only way in, and switching off passwords while no
 superadmin has a linked identity provider.
 
@@ -65,7 +65,7 @@ path that cannot be clicked.
 
 ## Google
 
-Google sign-in uses Google's ID-token button. SpaceWorks stores only the client IDs; there is no
+Google sign-in uses Google's ID-token button. Space Works stores only the client IDs; there is no
 client secret to protect.
 
 1. In the Google Cloud console, create an **OAuth client ID** of type **Web application**.
@@ -95,7 +95,7 @@ Use `--clear` to remove the Google client IDs and hide the button.
 
 ## OpenID Connect (Keycloak, Authentik, Azure AD, Okta)
 
-Any standards-compliant OpenID Connect provider can be added. SpaceWorks acts as a **public client**
+Any standards-compliant OpenID Connect provider can be added. Space Works acts as a **public client**
 using the authorization-code flow with PKCE (`S256`), so no client secret is stored. It requests the
 scopes `openid email profile`.
 
@@ -104,7 +104,7 @@ On the web, OpenID Connect buttons appear on the **member** sign-in screens. Sta
 password or Google/Apple.
 :::
 
-### Register SpaceWorks with your provider
+### Register Space Works with your provider
 
 Create a client in your identity provider with these properties:
 
@@ -119,10 +119,10 @@ Create a client in your identity provider with these properties:
   - `https://makerspace.example.org/member/account`, where members link a provider to an
     existing account
 - Redirect URIs must use `https` (only `localhost` may use `http`), and their origin must be one
-  SpaceWorks trusts: listed in `CORS_ALLOWED_ORIGINS` or `PLATFORM_STAFF_ORIGINS`, or a verified
+  Space Works trusts: listed in `CORS_ALLOWED_ORIGINS` or `PLATFORM_STAFF_ORIGINS`, or a verified
   custom domain.
 
-### Add the provider in SpaceWorks
+### Add the provider in Space Works
 
 In `/control/` → **OIDC providers**, add a row:
 
@@ -136,14 +136,14 @@ In `/control/` → **OIDC providers**, add a row:
 | Enabled | On. |
 | Allow auto-link | Leave on only if your provider verifies email ownership. |
 
-SpaceWorks fetches `<issuer>/.well-known/openid-configuration` and refuses the provider if the
+Space Works fetches `<issuer>/.well-known/openid-configuration` and refuses the provider if the
 document's issuer does not match exactly. Providers can be disabled but not deleted, because deleting
 one would lock out everyone who signs in only through it.
 
 ### How accounts are matched
 
-A provider identity is linked to one SpaceWorks account. On first sign-in with a matching email
-address, SpaceWorks links it automatically only when **Allow auto-link** is on, the provider says the
+A provider identity is linked to one Space Works account. On first sign-in with a matching email
+address, Space Works links it automatically only when **Allow auto-link** is on, the provider says the
 email is verified, **and** the local account's email is verified. Otherwise the person must link the
 provider from their account page. A linked identity never grants a role by itself; roles still come
 from each makerspace.
@@ -170,7 +170,7 @@ option simply does not appear.
 
 ## Two-step verification (TOTP)
 
-SpaceWorks supports authenticator-app codes (TOTP) as a second step:
+Space Works supports authenticator-app codes (TOTP) as a second step:
 
 | Who | Requirement |
 | --- | --- |
@@ -204,10 +204,10 @@ Refresh and sign-out also require an allowed `Origin` and a custom header, which
 requests.
 
 :::caution[Use HTTPS]
-Browsers drop `Secure` cookies on plain HTTP, and SpaceWorks refuses refresh requests from any plain
+Browsers drop `Secure` cookies on plain HTTP, and Space Works refuses refresh requests from any plain
 `http://` origin other than `localhost`. On a plain-HTTP install reached by LAN address or domain,
 staff sign-in cannot be renewed, so people are signed out when the 15-minute access token expires or
-the page reloads. Serve SpaceWorks over HTTPS for anything beyond a trial on the server itself; see
+the page reloads. Serve Space Works over HTTPS for anything beyond a trial on the server itself; see
 [Domains and TLS](/install/domains-and-tls/).
 :::
 
@@ -224,7 +224,7 @@ affected.
 People can still be named in two ways:
 
 - **Your own OpenID Connect provider** keeps working for members, because it is your institution's
-  directory rather than an account system that SpaceWorks runs.
+  directory rather than an account system that Space Works runs.
 - **Walk-ins.** Front-desk staff add a person at the counter from the handout screen. This creates a
   person record (name, optional email and phone) with no password and no way to sign in. Every path
   that could give that record a password, such as forgot-password, is refused.

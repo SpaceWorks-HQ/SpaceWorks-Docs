@@ -1,6 +1,6 @@
 ---
 title: Single-box install
-description: Run the whole SpaceWorks application in one container beside PostgreSQL and Silo storage, when it fits and what it can't do.
+description: Run the whole Space Works application in one container beside PostgreSQL and Silo storage, when it fits and what it can't do.
 sidebar:
   order: 6
 ---

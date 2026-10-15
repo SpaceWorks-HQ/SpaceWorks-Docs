@@ -1,11 +1,11 @@
 ---
 title: Cloud and split deployments
-description: What SpaceWorks supports on cloud providers today — a VPS, a website on Netlify, external object storage, hosted-platform mode — and what is not ready yet.
+description: What Space Works supports on cloud providers today — a VPS, a website on Netlify, external object storage, hosted-platform mode — and what is not ready yet.
 sidebar:
   order: 7
 ---
 
-SpaceWorks is built to be self-hosted with Docker Compose. "Cloud" for SpaceWorks therefore usually
+Space Works is built to be self-hosted with Docker Compose. "Cloud" for Space Works therefore usually
 means running that same stack on a rented server, optionally moving the website and the files to
 managed services. This page sets out what is supported today and what isn't.
 
@@ -119,7 +119,7 @@ Celery beat, Redis and a static frontend) and `deploy/render.managed.yaml` (the 
 hosted-platform mode).
 
 :::caution[Not deployable today]
-The SpaceWorks backend image refuses to start without a root-owned host marker that the bundled
+The Space Works backend image refuses to start without a root-owned host marker that the bundled
 Compose stack provides. Render can't mount it, so a deployment from these Blueprints is refused at
 start-up until a provider adapter exists. Don't work around this by overriding the image's
 entrypoint: that check is what keeps restores safe. Use a VPS with the standard stack instead.

@@ -1,11 +1,11 @@
 ---
 title: Roles and permissions
-description: How action-based roles work in SpaceWorks, what the four default roles can do, every staff action explained, custom roles, superadmins, organization grants and restricted accounts.
+description: How action-based roles work in Space Works, what the four default roles can do, every staff action explained, custom roles, superadmins, organization grants and restricted accounts.
 sidebar:
   order: 3
 ---
 
-SpaceWorks decides what a person can do from **actions**, not from the name of their role. A role is
+Space Works decides what a person can do from **actions**, not from the name of their role. A role is
 a list of actions owned by one makerspace, and every check asks "does this person hold this action
 here?". You can rename roles, narrow them or invent new ones, and nothing else in the system needs to
 know.
@@ -23,7 +23,7 @@ but you cannot delete them.
 | **Space Manager** | Everything grantable in the makerspace: the full hardware lifecycle, inventory and QR codes, evidence, machines, events, bookings, members and member cards, devices, finance, the audit log, and makerspace settings, roles and staff |
 | **Inventory Manager** | The full hardware lifecycle: inventory, QR codes, reviewing, issuing and returning requests, direct handouts, evidence and the audit log. No machines, printing, staff, finance or settings |
 | **Machine Manager** | Every machine in the makerspace end to end: the registry, the print and service queue, maintenance, warranty, usage and handing finished jobs over |
-| **Member** | No staff actions. A role with no actions is a community membership; it is how SpaceWorks tells a member from a staff member |
+| **Member** | No staff actions. A role with no actions is a community membership; it is how Space Works tells a member from a staff member |
 
 The Space Manager role must always keep `manage_makerspace`, and the Member role can never be given
 staff actions.

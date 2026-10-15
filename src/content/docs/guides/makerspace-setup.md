@@ -9,12 +9,12 @@ This guide walks a Space Manager (or the platform superadmin) through turning a 
 makerspace into one your community can use. Everything here happens in the **staff console**; you do
 not need a terminal unless a step says so.
 
-If SpaceWorks is not installed yet, start with [the one-line install](/install/one-line-install/) and
+If Space Works is not installed yet, start with [the one-line install](/install/one-line-install/) and
 [first run](/install/first-run/). The installer creates your first makerspace and its admin account.
 
 ## Where things live
 
-A SpaceWorks deployment has three faces. Bookmark the ones you use.
+A Space Works deployment has three faces. Bookmark the ones you use.
 
 | Surface | Address | Who uses it |
 | --- | --- | --- |
@@ -165,7 +165,7 @@ this makerspace to use an authenticator app.
 
 ## Alerts: Telegram, chat and email
 
-SpaceWorks sends alerts to your team; it never takes decisions from chat. Requests are always
+Space Works sends alerts to your team; it never takes decisions from chat. Requests are always
 accepted or rejected in the staff console.
 
 - **Telegram**: a superadmin enters the **Telegram group chat ID** and **Telegram bot token** under

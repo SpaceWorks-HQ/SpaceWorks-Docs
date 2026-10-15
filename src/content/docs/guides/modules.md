@@ -1,11 +1,11 @@
 ---
 title: Modules
-description: Every SpaceWorks module with its purpose, default and dependencies, plus setup areas, features, install versus purge, editions and space packs.
+description: Every Space Works module with its purpose, default and dependencies, plus setup areas, features, install versus purge, editions and space packs.
 sidebar:
   order: 2
 ---
 
-A makerspace only carries the parts it uses. SpaceWorks ships **34 modules**. Six are **core** and
+A makerspace only carries the parts it uses. Space Works ships **34 modules**. Six are **core** and
 always on, one (`backup`) is on by default, and the rest are opt-in. Modules are switched per
 makerspace, so one deployment can run a tool library next door to an events-only space.
 

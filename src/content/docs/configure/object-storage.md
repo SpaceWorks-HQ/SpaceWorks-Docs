@@ -1,11 +1,11 @@
 ---
 title: Object storage
-description: Configure the S3-compatible storage SpaceWorks uses for evidence photos, files and public images, including the two endpoint URLs, the private and public buckets, CORS and presigned uploads.
+description: Configure the S3-compatible storage Space Works uses for evidence photos, files and public images, including the two endpoint URLs, the private and public buckets, CORS and presigned uploads.
 sidebar:
   order: 4
 ---
 
-SpaceWorks keeps files in S3-compatible object storage, not in the database: handover evidence
+Space Works keeps files in S3-compatible object storage, not in the database: handover evidence
 photos, 3D print files, machine and warranty documents, receipts, report deliveries, backup archives,
 and public images such as item photos and makerspace logos. Object storage is required; there is no
 mode that runs without it.
@@ -21,7 +21,7 @@ Storage.
 | Private | `AWS_STORAGE_BUCKET_NAME` | `evidence` | Private. Every read and write uses a short-lived signed URL. | Evidence photos, print files, documents, receipts, exports, backups |
 | Public | `PUBLIC_IMAGE_BUCKET` | `public-images` | Anonymous read | Item photos, makerspace logo and cover images, published member profile images |
 
-The two names must differ; SpaceWorks refuses to start otherwise, so a public-read policy can never
+The two names must differ; Space Works refuses to start otherwise, so a public-read policy can never
 apply to evidence. Keep evidence and documents out of the public bucket.
 
 Inside the private bucket, files are separated by key prefix (module, makerspace and resource), not
@@ -120,7 +120,7 @@ Provider notes:
   use it only for `PUBLIC_IMAGE_BASE_URL`.
 - **Supabase Storage:** use its S3 endpoint and `put`.
 - **AWS S3:** use `https://s3.<region>.amazonaws.com` and the matching `AWS_S3_REGION_NAME`.
-- SpaceWorks uses **path-style** addressing (`https://endpoint/bucket/key`) and Signature V4. The
+- Space Works uses **path-style** addressing (`https://endpoint/bucket/key`) and Signature V4. The
   provider must accept both.
 
 :::tip

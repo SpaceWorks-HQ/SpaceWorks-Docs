@@ -1,11 +1,11 @@
 ---
 title: Kiosk and front desk
-description: Set up front-desk and kiosk devices in SpaceWorks, including station PINs, operator sign-in, what each station can do, how offline handovers are queued, and how to recover failed ones.
+description: Set up front-desk and kiosk devices in Space Works, including station PINs, operator sign-in, what each station can do, how offline handovers are queued, and how to recover failed ones.
 sidebar:
   order: 11
 ---
 
-Most makerspaces have a desk, a tablet by the door, or a laptop on the tool wall. SpaceWorks offers
+Most makerspaces have a desk, a tablet by the door, or a laptop on the tool wall. Space Works offers
 several ways to run them, from a simple public catalogue screen to a handover station that keeps
 working when the Wi-Fi drops.
 

@@ -1,16 +1,16 @@
 ---
 title: Concepts
-description: The mental model behind SpaceWorks, from deployments and makerspaces to roles, requests, evidence, modules and public visibility.
+description: The mental model behind Space Works, from deployments and makerspaces to roles, requests, evidence, modules and public visibility.
 sidebar:
   order: 3
 ---
 
-This page explains the ideas you need to understand SpaceWorks as a whole. Each section links to the
+This page explains the ideas you need to understand Space Works as a whole. Each section links to the
 guide that covers it in depth. For quick definitions, see the [Glossary](/get-started/glossary/).
 
 ## Deployment and makerspaces
 
-A **deployment** is one installation of SpaceWorks: one database, one set of containers, one web
+A **deployment** is one installation of Space Works: one database, one set of containers, one web
 address (or several). A deployment hosts one or more **makerspaces**, the tenants of the system.
 
 Every makerspace owns its own:
@@ -51,7 +51,7 @@ space exists.
 
 ## Roles and actions
 
-Permissions in SpaceWorks are **action-based** and **per makerspace**. There is a fixed set of
+Permissions in Space Works are **action-based** and **per makerspace**. There is a fixed set of
 actions, such as `accept_request`, `issue_request`, `edit_inventory`, `manage_qr`, `upload_evidence`,
 `manage_events` and `view_audit`. A **role** is a named, editable bundle of actions inside one
 makerspace, and a person's role in a makerspace decides what they can do there.
@@ -132,7 +132,7 @@ database triggers block attempts to do so.
 
 ## Accountability and access restriction
 
-When a return reports items as **damaged** or **missing**, SpaceWorks creates an **accountability
+When a return reports items as **damaged** or **missing**, Space Works creates an **accountability
 record** against the borrower, and the request ends as `closed_with_issue` once every item is
 accounted for. Accountability records are
 immutable. They are the link between a physical loss and the person responsible, and they are what
@@ -140,7 +140,7 @@ staff look at when deciding whether to restrict that person's access.
 
 ## Modules, areas and features
 
-SpaceWorks is split into **modules** that each makerspace turns on or off.
+Space Works is split into **modules** that each makerspace turns on or off.
 
 - **Core modules** are always on, because the handover rules depend on them: the public catalogue, the
   request workflow, the staff console, evidence uploads, QR management and the scanner.

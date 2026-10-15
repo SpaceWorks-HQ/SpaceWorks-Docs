@@ -1,11 +1,11 @@
 ---
 title: Updates
-description: How SpaceWorks releases work, how to update by hand or automatically with a GitHub Actions runner, and what happens when an update fails.
+description: How Space Works releases work, how to update by hand or automatically with a GitHub Actions runner, and what happens when an update fails.
 sidebar:
   order: 9
 ---
 
-SpaceWorks updates are pulled by your server: nothing is ever pushed into it. Every update backs up
+Space Works updates are pulled by your server: nothing is ever pushed into it. Every update backs up
 the database first, runs migrations through the same safety checks as a fresh install, and rolls the
 application back automatically if the new version doesn't come up healthy.
 

@@ -1,17 +1,17 @@
 ---
 title: Monitoring
-description: Watch a SpaceWorks deployment with structured JSON logs and request IDs, health and readiness checks, the token-protected Prometheus endpoint, the platform dashboard, Sentry and background-job checks.
+description: Watch a Space Works deployment with structured JSON logs and request IDs, health and readiness checks, the token-protected Prometheus endpoint, the platform dashboard, Sentry and background-job checks.
 sidebar:
   order: 9
 ---
 
-SpaceWorks gives you five ways to see what a deployment is doing: structured logs, health checks, a
+Space Works gives you five ways to see what a deployment is doing: structured logs, health checks, a
 Prometheus metrics endpoint, a built-in platform dashboard for superadmins, and optional Sentry error
 reporting. None of them sends data anywhere unless you configure it.
 
 ## Logs and request IDs
 
-Every request gets a correlation ID. If a proxy in front of SpaceWorks already sends an
+Every request gets a correlation ID. If a proxy in front of Space Works already sends an
 `X-Request-ID` header of up to 64 plain characters (letters, digits, `_ . : -`), that value is used;
 otherwise a new one is generated. The ID is returned in the response's `X-Request-ID` header, stamped
 on every log line the request produces, and carried into any background job it starts, so one search

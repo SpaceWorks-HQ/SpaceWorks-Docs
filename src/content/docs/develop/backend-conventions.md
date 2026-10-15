@@ -1,6 +1,6 @@
 ---
 title: Backend conventions
-description: How backend code in SpaceWorks is structured, scoped, audited and documented, with the patterns reviewers look for.
+description: How backend code in Space Works is structured, scoped, audited and documented, with the patterns reviewers look for.
 sidebar:
   order: 4
 ---

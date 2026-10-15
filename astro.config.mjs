@@ -11,9 +11,9 @@ export default defineConfig({
   site,
   integrations: [
     starlight({
-      title: 'SpaceWorks Docs',
+      title: 'Space Works Docs',
       description:
-        'Install, configure, run and extend SpaceWorks, the open-source makerspace manager.',
+        'Install, configure, run and extend Space Works, the open-source makerspace manager.',
       logo: {
         light: './src/assets/logo-light.svg',
         dark: './src/assets/logo-dark.svg',
@@ -27,10 +27,28 @@ export default defineConfig({
         baseUrl: 'https://github.com/SpaceWorks-HQ/SpaceWorks-Docs/edit/main/',
       },
       lastUpdated: true,
-      customCss: ['./src/styles/custom.css'],
+      customCss: [
+        '@fontsource-variable/outfit',
+        '@fontsource-variable/unbounded',
+        './src/styles/custom.css',
+      ],
+      components: {
+        ThemeProvider: './src/components/ThemeProvider.astro',
+        ThemeSelect: './src/components/ThemeSelect.astro',
+      },
+      expressiveCode: {
+        themes: ['github-light', 'github-dark'],
+        styleOverrides: {
+          borderRadius: '10px',
+          borderColor: 'var(--sl-color-hairline)',
+          codeBackground: 'var(--sw-panel)',
+          frames: { shadowColor: 'transparent' },
+        },
+      },
       plugins: [starlightLinksValidator()],
       sidebar: [
         { label: 'Get started', items: [{ autogenerate: { directory: 'get-started' } }] },
+        { label: 'Tutorials', items: [{ autogenerate: { directory: 'tutorials' } }] },
         { label: 'Install & deploy', items: [{ autogenerate: { directory: 'install' } }] },
         { label: 'Configure', items: [{ autogenerate: { directory: 'configure' } }] },
         { label: 'Run your makerspace', items: [{ autogenerate: { directory: 'guides' } }] },

@@ -1,11 +1,11 @@
 ---
 title: Backup and restore
-description: What SpaceWorks backs up, how to schedule and download encrypted archives, copy them offsite, restore a server, and move one makerspace to another deployment.
+description: What Space Works backs up, how to schedule and download encrypted archives, copy them offsite, restore a server, and move one makerspace to another deployment.
 sidebar:
   order: 10
 ---
 
-SpaceWorks has a built-in backup system that captures the database **and** the uploaded files
+Space Works has a built-in backup system that captures the database **and** the uploaded files
 together, encrypts them, and can restore them with safety checks along the way. This page covers
 how to use it, what you must keep off the server, and how to move a single makerspace to another
 deployment.
@@ -26,7 +26,7 @@ Only **full deployment archives** can be restored. Makerspace archives are downl
 one makerspace's data.
 
 :::caution
-A downloaded archive is a complete copy of production data. Once it's outside SpaceWorks, deleting
+A downloaded archive is a complete copy of production data. Once it's outside Space Works, deleting
 a makerspace doesn't delete it, so keep downloaded copies somewhere safe and delete them when you no
 longer need them.
 :::
@@ -120,7 +120,7 @@ steps and acknowledge the remaining risk before normal use resumes.
 
 If the original server is gone:
 
-1. Install SpaceWorks on the new server with the [one-line install](/install/one-line-install/),
+1. Install Space Works on the new server with the [one-line install](/install/one-line-install/),
    using the same hosting, HTTPS and storage choices.
 2. Copy the **original** server's backup age identity next to the new one, without overwriting the
    new server's own identity (the new server keeps encrypting future backups to that one):

@@ -1,11 +1,11 @@
 ---
 title: Notifications
-description: Send SpaceWorks alerts to email, Telegram, Slack, Mattermost, Discord, signed webhooks, the in-app inbox and mobile push, and choose which events go where and to whom.
+description: Send Space Works alerts to email, Telegram, Slack, Mattermost, Discord, signed webhooks, the in-app inbox and mobile push, and choose which events go where and to whom.
 sidebar:
   order: 5
 ---
 
-SpaceWorks tells people when something happens: a borrow request arrives, a booking is confirmed, a
+Space Works tells people when something happens: a borrow request arrives, a booking is confirmed, a
 machine needs maintenance, a payment is received. Each makerspace decides **which events** go to
 **which channels** and **who** receives them. Chat credentials belong to the makerspace, are stored
 encrypted with `API_CLIENT_ENC_KEY`, and are write-only once saved.

@@ -1,11 +1,11 @@
 ---
 title: API overview
-description: Base URLs, interactive docs, request and response conventions, rate limits and the endpoint groups of the SpaceWorks REST API.
+description: Base URLs, interactive docs, request and response conventions, rate limits and the endpoint groups of the Space Works REST API.
 sidebar:
   order: 1
 ---
 
-Everything the SpaceWorks web console, public pages and mobile apps do goes through one REST API, served by the Django backend. You can call the same API from your own scripts, websites and integrations. This page covers the conventions every endpoint shares; the rest of this section explains how to [authenticate](/api/authentication/), how to build a signed [API client](/api/api-clients/), how to receive [webhooks](/api/webhooks/), and how [connected devices](/api/devices/) talk to the server.
+Everything the Space Works web console, public pages and mobile apps do goes through one REST API, served by the Django backend. You can call the same API from your own scripts, websites and integrations. This page covers the conventions every endpoint shares; the rest of this section explains how to [authenticate](/api/authentication/), how to build a signed [API client](/api/api-clients/), how to receive [webhooks](/api/webhooks/), and how [connected devices](/api/devices/) talk to the server.
 
 ## Base URL
 
@@ -35,13 +35,13 @@ Every endpoint is described in an OpenAPI 3 schema generated from the code, so t
 Visiting the bare backend root (`/`) redirects to `/docs/`. On a production install, the bundled reverse proxy forwards `/docs`, `/redoc` and `/schema` to the backend, so they work on your main domain.
 
 :::tip[Generate a client]
-Point any OpenAPI generator at `/schema/` to produce a typed client. The SpaceWorks web console does exactly this: its TypeScript types are generated from the same schema.
+Point any OpenAPI generator at `/schema/` to produce a typed client. The Space Works web console does exactly this: its TypeScript types are generated from the same schema.
 :::
 
 ## Versioning
 
 - **The URL version** (`/api/v1/`) changes only for breaking changes to the route layout. New endpoints and new response fields are added within `v1`.
-- **The schema version** (`info.version` in `/schema/`) matches the SpaceWorks release, for example `0.9.2`. Check it to see which release a server runs.
+- **The schema version** (`info.version` in `/schema/`) matches the Space Works release, for example `0.9.2`. Check it to see which release a server runs.
 - **Protocols version independently.** The API-client signature format, the device signature format (`X-Device-Signature-Version: v1`) and the webhook payload format (`payload_version` 1 or 2) each carry their own version, so they can evolve without a new URL version.
 
 ## Requests and responses
@@ -118,7 +118,7 @@ A throttled request gets `429` and a `Retry-After` header in seconds.
 
 ## Makerspaces in URLs
 
-SpaceWorks is multi-tenant: almost every record belongs to one makerspace, and the URL says which.
+Space Works is multi-tenant: almost every record belongs to one makerspace, and the URL says which.
 
 | Surface | How the makerspace is named | Example |
 | --- | --- | --- |
@@ -202,5 +202,5 @@ A deployment can require every public call to carry API-client or publishable-ke
 
 - [Authentication](/api/authentication/): sign in and call staff and member endpoints.
 - [API clients](/api/api-clients/): sign server-to-server requests to the public API.
-- [Webhooks](/api/webhooks/): receive signed events from SpaceWorks.
+- [Webhooks](/api/webhooks/): receive signed events from Space Works.
 - [Devices](/api/devices/): connect printers and label printers.
