@@ -2,13 +2,18 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
+import { satteri } from '@astrojs/markdown-satteri';
+import { baseLinksPlugin } from './src/plugins/base-links.mjs';
 
-// Set DOCS_SITE_URL to the public address (e.g. https://docs.example.org) so the
-// sitemap and canonical links are generated. Builds work without it.
-const site = process.env.DOCS_SITE_URL || undefined;
+// GitHub Pages serves the site at https://spaceworks-hq.github.io/SpaceWorks-Docs/. Set
+// DOCS_SITE_URL to override the origin used for the sitemap and canonical links.
+const site = process.env.DOCS_SITE_URL || 'https://spaceworks-hq.github.io';
+const base = '/SpaceWorks-Docs';
 
 export default defineConfig({
   site,
+  base,
+  markdown: { processor: satteri({ hastPlugins: [baseLinksPlugin(base)] }) },
   integrations: [
     starlight({
       title: 'Space Works Docs',

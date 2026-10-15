@@ -16,7 +16,7 @@ npm ci
 npm run dev
 ```
 
-Then open <http://localhost:4321/>. Pages reload as you edit.
+Then open <http://localhost:4321/SpaceWorks-Docs/>. Pages reload as you edit.
 
 ```bash
 npm run build     # static site in dist/, fails on any broken internal link
@@ -55,20 +55,31 @@ sidebar:
 
 - Check facts against the Space Works source (settings, scripts, compose files), not only its older
   Markdown docs.
-- Link between pages with absolute paths and a trailing slash: `[Updates](/install/updates/)`.
+- Link between pages with absolute paths and a trailing slash: `[Updates](/install/updates/)`. The
+  site is served under `/SpaceWorks-Docs/`, and `src/plugins/base-links.mjs` adds that prefix to
+  Markdown links and MDX `href` props for you. Frontmatter links (the home page's `hero.actions`) are
+  not processed, so write those with the prefix: `/SpaceWorks-Docs/get-started/quick-start/`.
 - Use placeholders (`example.org`, `change-me`) — never real keys or personal data.
 
 ## Deploying
 
-`.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to `main`.
+`.github/workflows/deploy.yml` builds the site and publishes it to
+<https://spaceworks-hq.github.io/SpaceWorks-Docs/> on every push to `main`.
 
-1. In the repository settings, set **Pages → Source** to **GitHub Actions**.
-2. Add a repository variable `DOCS_SITE_URL` with the public address (for example
-   `https://docs.example.org`) so the sitemap and canonical links are correct.
-3. For a custom domain, set it under **Pages → Custom domain** and point a `CNAME` DNS record at
-   `<owner>.github.io`.
+**Pages → Source** in the repository settings must be **GitHub Actions**. With *Deploy from a branch*,
+GitHub runs Jekyll over the Astro sources instead, which fails, and the workflow's deploy step gets a 404.
+
+To move the site to a custom domain, set it under **Pages → Custom domain**, point a `CNAME` DNS record
+at `spaceworks-hq.github.io`, set the repository variable `DOCS_SITE_URL` to the new address, and change
+`base` in `astro.config.mjs` (and the two hero links in `index.mdx`) to `/`.
 
 The output in `dist/` is plain static files, so Netlify, Cloudflare Pages or any web server work too.
+
+## Contributing
+
+Open a pull request against `main`. Only the maintainer,
+[@Shaan-Shoukath](https://github.com/Shaan-Shoukath), can merge into `main`: every push to it
+publishes the site, so `main` is protected and nobody else can push to it or merge into it.
 
 ## License
 
